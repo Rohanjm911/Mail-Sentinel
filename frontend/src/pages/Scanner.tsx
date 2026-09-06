@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, FileCode, Clipboard, AlertCircle } from "lucide-react";
+import { ShieldCheck, FileCode, Clipboard, AlertCircle, Lock } from "lucide-react";
 import { ScanService, type PasteScanPayload } from "../services/api";
 import { EmailInput } from "../components/EmailInput";
 import { FileUploader } from "../components/FileUploader";
@@ -45,60 +45,72 @@ export const Scanner: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-xl font-bold font-mono text-[#f8fafc] tracking-tight">
-          Email Security Scanner
-        </h1>
-        <p className="text-xs text-[#94a3b8] font-mono leading-relaxed">
-          Analyze an email for phishing indicators, suspicious URLs, authentication anomalies, and social-engineering patterns.
-        </p>
+    <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/25 text-sky-400 font-bold uppercase">
+              Forensic Ingestion Module
+            </span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight font-sans">
+            Email Security Scanner
+          </h1>
+          <p className="text-xs text-slate-400 font-sans leading-relaxed">
+            Multi-vector analysis for deceptive lures, brand spoofing, numerical IP hosts, and psychological urgency coercion.
+          </p>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1.5 rounded-xl shrink-0">
+          <ShieldCheck className="w-4 h-4" />
+          <span>Local Air-Gapped Engine</span>
+        </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-[#ef4444]/15 border border-[#ef4444]/40 rounded-lg text-xs font-mono text-[#ef4444] flex items-center gap-2">
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-xs font-mono text-red-400 flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Main Scanner Container */}
-      <div className="bg-[#121824] border border-[#1e293b] rounded-lg overflow-hidden">
+      <div className="cyber-card rounded-2xl overflow-hidden border border-slate-800">
         {/* Input Mode Tabs */}
-        <div className="flex border-b border-[#1e293b] bg-[#0b0f17]">
+        <div className="flex p-2 bg-[#090e1b] border-b border-[#1e2d4a] gap-2">
           <button
             type="button"
             onClick={() => setActiveTab("paste")}
-            className={`flex-1 py-3 px-4 text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer border-b-2 ${
+            className={`flex-1 py-3 px-4 text-xs font-semibold flex items-center justify-center gap-2.5 rounded-xl transition-all cursor-pointer ${
               activeTab === "paste"
-                ? "border-[#f8fafc] text-[#f8fafc] bg-[#121824]"
-                : "border-transparent text-[#94a3b8] hover:text-[#cbd5e1] hover:bg-[#121824]/50"
+                ? "bg-[#121d33] text-sky-400 border border-sky-500/40 shadow-sm font-bold"
+                : "text-slate-400 hover:text-slate-200 hover:bg-[#111a2d]/60 border border-transparent"
             }`}
           >
-            <Clipboard className="w-3.5 h-3.5" />
-            <span>Paste Email</span>
+            <Clipboard className="w-4 h-4" />
+            <span>Paste Email Contents</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("upload")}
-            className={`flex-1 py-3 px-4 text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer border-b-2 ${
+            className={`flex-1 py-3 px-4 text-xs font-semibold flex items-center justify-center gap-2.5 rounded-xl transition-all cursor-pointer ${
               activeTab === "upload"
-                ? "border-[#f8fafc] text-[#f8fafc] bg-[#121824]"
-                : "border-transparent text-[#94a3b8] hover:text-[#cbd5e1] hover:bg-[#121824]/50"
+                ? "bg-[#121d33] text-sky-400 border border-sky-500/40 shadow-sm font-bold"
+                : "text-slate-400 hover:text-slate-200 hover:bg-[#111a2d]/60 border border-transparent"
             }`}
           >
-            <FileCode className="w-3.5 h-3.5" />
-            <span>Upload .EML</span>
+            <FileCode className="w-4 h-4" />
+            <span>Upload RFC 5322 .EML</span>
           </button>
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-6 md:p-8">
           {loading ? (
             <LoadingState
-              message="Processing Security Telemetry..."
-              submessage="Executing local TF-IDF classification, token extraction, heuristic analysis, and risk synthesis."
+              message="Executing Forensic Threat Pipeline..."
+              submessage="Processing local TF-IDF classification, token extraction, heuristic parsing, and risk synthesis."
             />
           ) : activeTab === "paste" ? (
             <EmailInput
@@ -111,15 +123,15 @@ export const Scanner: React.FC = () => {
               <FileUploader onUpload={handleFileUpload} isLoading={loading} />
 
               {/* Information Box on Safe EML parsing */}
-              <div className="p-4 bg-[#0b0f17] border border-[#1e293b] rounded-md space-y-2 text-xs font-mono text-[#94a3b8]">
-                <div className="flex items-center gap-2 text-[#cbd5e1] font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-[#10b981]" />
+              <div className="p-4 rounded-xl bg-[#090e1b] border border-[#1e2d4a] space-y-2.5 text-xs font-mono text-slate-400">
+                <div className="flex items-center gap-2 text-slate-200 font-semibold">
+                  <Lock className="w-4 h-4 text-emerald-400" />
                   <span>RFC 5322 Sandboxed Inspection Protocol:</span>
                 </div>
-                <ul className="list-disc list-inside space-y-1 text-[#64748b] pl-1">
-                  <li>HTML payloads are stripped of embedded JavaScript, iframes, and external tracking pixels.</li>
-                  <li>Attachments are parsed for MIME headers and double-extensions without binary execution.</li>
-                  <li>Extracted hyperlinks are normalized and analyzed passively without initiating outbound network requests.</li>
+                <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1">
+                  <li>HTML payloads are stripped of embedded JavaScript, tracking beacons, and execution vectors.</li>
+                  <li>Attachments are parsed for MIME headers and double-extensions without launching binary code.</li>
+                  <li>Extracted hyperlinks are normalized and analyzed purely via deterministic lexical heuristics.</li>
                 </ul>
               </div>
             </div>

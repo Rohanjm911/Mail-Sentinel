@@ -97,6 +97,23 @@ class ThreatTimelinePoint(BaseModel):
     high: int
     medium: int
     low: int
+    date: Optional[str] = None
+
+class ScoreHistoryPoint(BaseModel):
+    id: str
+    scan_num: int
+    label: str
+    subject: str
+    sender: str
+    score: int
+    severity: str
+    time: str
+    confidence: float
+
+class EngineTelemetryPoint(BaseModel):
+    engine: str
+    score: float
+    weight: float
 
 class StatisticsResponse(BaseModel):
     total_scans: int
@@ -106,6 +123,10 @@ class StatisticsResponse(BaseModel):
     is_sample_data: bool = False
     severity_breakdown: Dict[str, int]
     timeline: List[ThreatTimelinePoint]
+    threat_trends: List[ThreatTimelinePoint] = []
+    score_history: List[ScoreHistoryPoint] = []
+    engine_telemetry: List[EngineTelemetryPoint] = []
+    recent_scans: List[ScanListItem] = []
 
 class ErrorDetail(BaseModel):
     code: str

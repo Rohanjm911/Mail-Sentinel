@@ -148,19 +148,49 @@ export interface ScanHistoryResponse {
   items: ScanSummary[];
 }
 
+export interface ScoreHistoryPoint {
+  id: string;
+  scan_num: number;
+  label: string;
+  subject: string;
+  sender: string;
+  score: number;
+  severity: SeverityLevel;
+  time: string;
+  confidence: number;
+}
+
+export interface EngineTelemetryPoint {
+  engine: string;
+  score: number;
+  weight: number;
+}
+
 export interface DashboardStatistics {
   total_scans: number;
   phishing_detected: number;
   safe_emails: number;
   average_risk: number;
   is_sample_data: boolean;
+  severity_breakdown: Record<string, number>;
   threat_trends: Array<{
     date: string;
     critical: number;
     high: number;
     medium: number;
     low: number;
+    time?: string;
   }>;
+  timeline?: Array<{
+    time: string;
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+    date?: string;
+  }>;
+  score_history: ScoreHistoryPoint[];
+  engine_telemetry: EngineTelemetryPoint[];
   recent_scans: ScanSummary[];
 }
 
@@ -169,4 +199,38 @@ export interface ThreatIntelProvider {
   provider: string;
   configured: boolean;
   status: string;
+  description?: string;
+}
+
+export interface IOCIndicator {
+  category: string;
+  severity: SeverityLevel;
+  title: string;
+  description: string;
+  evidence?: string;
+}
+
+export interface IOCAnalysis {
+  ioc: string;
+  type: "url" | "domain" | "ip";
+  verdict: string;
+  severity: SeverityLevel;
+  risk_score: number;
+  confidence: number;
+  summary: string;
+  indicators: IOCIndicator[];
+  telemetry: Record<string, any>;
+  recommendations: string[];
+}
+
+export interface IOCLookupResponse {
+  ioc: string;
+  type: string;
+  analysis?: IOCAnalysis;
+  results?: Record<string, {
+    provider: string;
+    status: string;
+    configured: boolean;
+    data: any;
+  }>;
 }

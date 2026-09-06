@@ -1,5 +1,6 @@
 import React from "react";
-import { ExternalLink, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ExternalLink, ShieldAlert, CheckCircle2, Radio } from "lucide-react";
 import type { URLItem } from "../types/scan";
 
 interface URLTableProps {
@@ -26,6 +27,7 @@ export const URLTable: React.FC<URLTableProps> = ({ urls }) => {
             <th className="p-3 font-semibold">Risk Score</th>
             <th className="p-3 font-semibold">Status</th>
             <th className="p-3 font-semibold">Flags / Heuristics</th>
+            <th className="p-3 font-semibold text-right">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#1e293b]">
@@ -79,6 +81,16 @@ export const URLTable: React.FC<URLTableProps> = ({ urls }) => {
                   ) : (
                     <span className="text-[#64748b]">None</span>
                   )}
+                </td>
+                <td className="p-3 text-right">
+                  <Link
+                    to={`/threat-intelligence?ioc=${encodeURIComponent(item.url)}&type=url`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b0f17] hover:bg-[#1e293b] border border-[#1e293b] hover:border-[#38bdf8]/40 text-[11px] text-[#cbd5e1] hover:text-[#f8fafc] transition-colors"
+                    title="Deep inspect in Threat Intelligence"
+                  >
+                    <Radio className="w-3 h-3 text-[#38bdf8]" />
+                    <span>Analyze IOC</span>
+                  </Link>
                 </td>
               </tr>
             );

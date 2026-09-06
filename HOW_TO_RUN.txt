@@ -1,0 +1,109 @@
+================================================================================
+                       HOW TO RUN MAIL SENTINEL
+              "Detect the Threat. Protect the Inbox."
+================================================================================
+
+--------------------------------------------------------------------------------
+METHOD 1: QUICK 1-CLICK LAUNCH (WINDOWS)
+--------------------------------------------------------------------------------
+Simply double-click "run.bat" in the project root directory, or run from
+terminal:
+
+    .\run.bat
+
+This script automatically:
+1. Starts the FastAPI Backend on http://127.0.0.1:8000
+2. Starts the React + Vite Frontend on http://127.0.0.1:5173
+3. Opens your browser directly to http://127.0.0.1:5173
+
+
+--------------------------------------------------------------------------------
+METHOD 2: MANUAL LAUNCH (WINDOWS, MACOS, LINUX)
+--------------------------------------------------------------------------------
+
+STEP 1: PREREQUISITES
+Make sure you have installed:
+- Python 3.10+ (Check with: python --version)
+- Node.js 18+  (Check with: node -v)
+- npm 9+       (Check with: npm -v)
+
+
+STEP 2: FIRST-TIME INSTALLATION (ONE-TIME SETUP)
+
+A. Backend Dependencies:
+   1. Open terminal and navigate to backend:
+      cd backend
+   2. Install dependencies:
+      pip install -r requirements.txt
+   3. (Optional) Retrain ML baseline model:
+      python ml/train.py
+
+B. Frontend Dependencies:
+   1. Open terminal and navigate to frontend:
+      cd frontend
+   2. Install packages:
+      npm install
+
+
+STEP 3: RUNNING THE SERVERS (REQUIRES 2 TERMINAL WINDOWS)
+
+Terminal 1 - Backend API:
+    cd backend
+    python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+Terminal 2 - Frontend Web UI:
+    cd frontend
+    npm run dev
+
+
+--------------------------------------------------------------------------------
+SERVICE URLS & ENDPOINTS
+--------------------------------------------------------------------------------
+- Web Dashboard:            http://localhost:5173
+- Email Threat Scanner:     http://localhost:5173/scan
+- Threat Intelligence (IOC):http://localhost:5173/threat-intelligence
+- Scan Audit History:       http://localhost:5173/history
+- Backend API Docs (Swagger):http://127.0.0.1:8000/docs
+- Backend Alternative Docs: http://127.0.0.1:8000/redoc
+- Backend Health Check:     http://127.0.0.1:8000/api/health
+
+
+--------------------------------------------------------------------------------
+HOW TO TEST THE SYSTEM
+--------------------------------------------------------------------------------
+1. Scan Test Email:
+   - Go to http://localhost:5173/scan
+   - Select "Paste Email Contents"
+   - Sender:  Security Team <support@micros0ft-verify.com>
+   - Subject: URGENT: Your Account Has Been Suspended
+   - Body:    Immediate action required. Please verify your credentials at
+              http://192.168.1.105/login within 24 hours or your account will
+              be permanently deleted.
+   - Click "Scan Email for Threats" -> Risk Score: 75-90 (CRITICAL/HIGH)
+
+2. IOC Threat Intelligence Test:
+   - Go to http://localhost:5173/threat-intelligence
+   - Click the preset: paypal-security-update.xyz
+   - Click "Analyze Indicator" -> Threat Verdict: MALICIOUS (Risk: 92/100)
+
+
+--------------------------------------------------------------------------------
+HOW TO STOP THE SERVERS
+--------------------------------------------------------------------------------
+- If running in terminal: Press Ctrl + C in both terminal windows.
+- If launched with run.bat: Simply close both opened command prompt windows.
+- In PowerShell (Force stop):
+  Get-NetTCPConnection -LocalPort 8000, 5173 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING
+--------------------------------------------------------------------------------
+- Port 8000 or 5173 already in use:
+  Run in PowerShell:
+  Get-NetTCPConnection -LocalPort 8000, 5173 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+
+- "Failed to connect to server" error in browser:
+  Ensure the backend is running at http://127.0.0.1:8000 before scanning.
+  Check health at: http://127.0.0.1:8000/api/health
+================================================================================

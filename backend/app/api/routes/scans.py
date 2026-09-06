@@ -117,9 +117,10 @@ def get_scan_detail(scan_id: str, db: Session = Depends(get_db)):
 
     # Parse stored analysis JSON
     analysis = {}
-    if scan.analysis_json:
+    analysis_raw = getattr(scan, "analysis_json", None)
+    if analysis_raw:
         try:
-            analysis = json.loads(scan.analysis_json)
+            analysis = json.loads(str(analysis_raw))
         except Exception:
             pass
 
@@ -209,13 +210,13 @@ def list_scans(
 
     formatted_items = [
         ScanListItem(
-            id=s.id,
+            id=str(s.id),
             created_at=s.created_at,
-            score=s.score,
-            severity=s.severity,
-            confidence=s.confidence,
-            sender=s.sender,
-            subject=s.subject,
+            score=int(s.score),
+            severity=str(s.severity),
+            confidence=float(s.confidence),
+            sender=str(s.sender),
+            subject=str(s.subject),
             time_ago=format_time_ago(s.created_at)
         )
         for s in items

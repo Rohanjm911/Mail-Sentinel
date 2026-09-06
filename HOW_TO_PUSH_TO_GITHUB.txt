@@ -1,0 +1,82 @@
+================================================================================
+MAIL SENTINEL - HOW TO PUSH THE PROJECT TO GITHUB
+================================================================================
+
+Follow these step-by-step instructions to initialize, commit, and push 
+the Mail Sentinel repository to your GitHub account.
+
+--------------------------------------------------------------------------------
+PREREQUISITES:
+--------------------------------------------------------------------------------
+1. Git installed on your machine.
+2. A GitHub account (https://github.com).
+3. A new empty repository created on GitHub:
+   - Go to: https://github.com/new
+   - Repository name: Mail-Sentinel (or your preferred name)
+   - Description: "SOC-grade Explainable Email Phishing Detection & Threat Analysis Platform"
+   - Public or Private: Choose based on your preference
+   - DO NOT initialize with a README, .gitignore, or license (these already exist locally)
+   - Click "Create repository"
+
+--------------------------------------------------------------------------------
+STEP-BY-STEP COMMANDS:
+--------------------------------------------------------------------------------
+
+Open your terminal (PowerShell, Command Prompt, or Git Bash) in the root project folder:
+D:\projects and certificates\projects\cyber\Mail Sentinal
+
+1. CHECK GIT REPO STATUS:
+   git status
+
+2. (IF NOT YET INITIALIZED):
+   git init
+
+3. VERIFY .gitignore TO PREVENT PUSHING SENSITIVE OR HEAVY FILES:
+   Ensure your .gitignore excludes:
+   - .env (sensitive API keys)
+   - node_modules/
+   - __pycache__/
+   - .venv/ or venv/
+   - dist/
+   - *.db or mail_sentinel.db (local development database)
+
+4. STAGE ALL CODE AND ASSETS:
+   git add .
+
+5. COMMIT YOUR CHANGES WITH A MEANINGFUL MESSAGE:
+   git commit -m "feat: complete Mail Sentinel platform with IOC lookup and SOC threat engine"
+
+6. SET MAIN AS THE DEFAULT BRANCH:
+   git branch -M main
+
+7. LINK YOUR LOCAL REPOSITORY TO YOUR REMOTE GITHUB REPO:
+   Replace <YOUR-USERNAME> and <YOUR-REPO> with your actual GitHub username and repository name:
+
+   git remote add origin https://github.com/<YOUR-USERNAME>/Mail-Sentinel.git
+
+   (If origin is already added and you need to update it):
+   git remote set-url origin https://github.com/<YOUR-USERNAME>/Mail-Sentinel.git
+
+8. PUSH YOUR CODE TO GITHUB:
+   git push -u origin main
+
+--------------------------------------------------------------------------------
+FUTURE UPDATES & COMMITS WORKFLOW:
+--------------------------------------------------------------------------------
+Whenever you make updates to the codebase in the future, run:
+
+   git add .
+   git commit -m "feat/fix: describe your update here"
+   git push
+
+--------------------------------------------------------------------------------
+AUTHENTICATION NOTE (IF PROMPTED FOR CREDENTIALS):
+--------------------------------------------------------------------------------
+GitHub requires a Personal Access Token (PAT) or GitHub CLI authentication instead 
+of account passwords:
+1. Go to: GitHub -> Settings -> Developer settings -> Personal access tokens -> Tokens (classic)
+2. Generate new token with 'repo' scope.
+3. Use the token as your password when git prompts you in the terminal.
+   Alternatively, sign in with GitHub CLI:
+   gh auth login
+================================================================================

@@ -83,7 +83,7 @@ class SenderAnalyzerService:
         Returns risk points, status, and explainable findings.
         """
         effective_sender = sender_raw or raw_sender or ""
-        findings: List[Dict[str, str]] = []
+        findings: List[Dict[str, Any]] = []
         risk_score = 0  # 0 to 100 for this category
 
         sender = SenderAnalyzerService.parse_address(effective_sender)
@@ -99,7 +99,7 @@ class SenderAnalyzerService:
                 "severity": "HIGH",
                 "title": "Invalid Sender Syntax",
                 "description": f"The sender address '{sender_raw}' is malformed or missing a valid domain.",
-                "evidence": sender_raw
+                "evidence": sender_raw or ""
             })
 
         # 2. Free-mail domain evaluation

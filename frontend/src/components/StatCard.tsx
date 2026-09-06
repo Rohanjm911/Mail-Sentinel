@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import type { LucideIcon } from "lucide-react";
+import { animate } from "animejs";
 
 interface StatCardProps {
   title: string;
@@ -18,38 +19,90 @@ export const StatCard: React.FC<StatCardProps> = ({
   badgeText,
   badgeType = "neutral",
 }) => {
-  let badgeColor = "text-[#94a3b8] bg-[#0b0f17] border-[#1e293b]";
-  if (badgeType === "safe") badgeColor = "text-[#10b981] bg-[#10b981]/10 border-[#10b981]/30";
-  if (badgeType === "warning") badgeColor = "text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/30";
-  if (badgeType === "danger") badgeColor = "text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/30";
+  const countRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!countRef.current) return;
+    const strVal = String(value);
+    const rawNum = typeof value === "number" ? value : parseFloat(strVal.replace(/,/g, ""));
+    
+    if (isNaN(rawNum)) {
+      countRef.current.textContent = strVal;
+      return;
+    }
+
+    const hasDecimal = strVal.includes(".");
+    const obj = { val: 0 };
+
+    animate(obj, {
+      val: rawNum,
+      ease: "outExpo",
+      duration: 1100,
+      onUpdate: () => {
+        if (countRef.current) {
+          if (hasDecimal) {
+            countRef.current.textContent = obj.val.toFixed(1);
+          } else {
+            countRef.current.textContent = Math.round(obj.val).toLocaleString();
+          }
+        }
+      },
+    });
+  }, [value]);
+
+  let badgeStyle = "text-slate-400 bg-slate-800/60 border-slate-700/60";
+  let iconGlow = "text-sky-400 bg-sky-500/10 border-sky-500/25";
+  let topBarColor = "bg-sky-500";
+
+  if (badgeType === "safe") {
+    badgeStyle = "text-emerald-400 bg-emerald-500/10 border-emerald-500/30 glow-badge-safe";
+    iconGlow = "text-emerald-400 bg-emerald-500/10 border-emerald-500/25";
+    topBarColor = "bg-emerald-500";
+  } else if (badgeType === "warning") {
+    badgeStyle = "text-amber-400 bg-amber-500/10 border-amber-500/30";
+    iconGlow = "text-amber-400 bg-amber-500/10 border-amber-500/25";
+    topBarColor = "bg-amber-500";
+  } else if (badgeType === "danger") {
+    badgeStyle = "text-red-400 bg-red-500/10 border-red-500/30 glow-badge-critical";
+    iconGlow = "text-red-400 bg-red-500/10 border-red-500/25";
+    topBarColor = "bg-red-500";
+  }
 
   return (
-    <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-5 flex flex-col justify-between hover:border-[#334155] transition-colors">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-mono uppercase tracking-wider text-[#94a3b8]">
-          {title}
-        </span>
-        <div className="p-2 rounded bg-[#0b0f17] border border-[#1e293b] text-[#94a3b8]">
-          <Icon className="w-4 h-4" />
-        </div>
-      </div>
+    <div className="relative overflow-hidden rounded-xl cyber-card p-5 flex flex-col justify-between group transition-transform duration-200 hover:-translate-y-0.5">
+      {/* Top clean solid accent bar */}
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${topBarColor}`} />
 
-      <div className="mt-4 flex items-baseline justify-between">
-        <div className="text-3xl font-bold font-mono text-[#f8fafc] tracking-tight">
-          {value}
-        </div>
-        {badgeText && (
-          <span className={`text-[11px] font-mono px-2 py-0.5 rounded border ${badgeColor}`}>
-            {badgeText}
+      {/* Watermarked Icon in Background */}
+      <Icon className="absolute -right-2 -bottom-2 w-20 h-20 text-slate-800/20 group-hover:text-slate-700/30 transition-colors pointer-events-none -z-0" />
+
+      <div className="relative z-10">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400">
+            {title}
           </span>
+          <div className={`p-2 rounded-lg border ${iconGlow} shadow-sm transition-transform group-hover:scale-110 duration-200`}>
+            <Icon className="w-4 h-4" />
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-baseline justify-between">
+          <div className="text-3xl font-extrabold font-mono text-slate-100 tracking-tight">
+            <span ref={countRef}>{value}</span>
+          </div>
+          {badgeText && (
+            <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${badgeStyle}`}>
+              {badgeText}
+            </span>
+          )}
+        </div>
+
+        {subtitle && (
+          <div className="mt-2 text-xs text-slate-400 font-sans line-clamp-1">
+            {subtitle}
+          </div>
         )}
       </div>
-
-      {subtitle && (
-        <div className="mt-2 text-xs text-[#64748b] font-mono">
-          {subtitle}
-        </div>
-      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import type {
   ScanHistoryResponse,
   DashboardStatistics,
   ThreatIntelProvider,
+  IOCLookupResponse,
 } from "../types/scan";
 
 const API_BASE = "/api";
@@ -76,8 +77,8 @@ export const ScanService = {
     return res.data;
   },
 
-  async lookupIOC(type: string, value: string): Promise<any> {
-    const res = await api.post("/threat-intel/lookup", { type, value });
+  async lookupIOC(type: string, value: string): Promise<IOCLookupResponse> {
+    const res = await api.post<IOCLookupResponse>("/threat-intel/lookup", { type, value });
     return res.data;
   },
 };

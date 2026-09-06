@@ -135,7 +135,7 @@ class EmailParserService:
         }
 
     @staticmethod
-    def _extract_from_message(msg: EmailMessage) -> Dict[str, Any]:
+    def _extract_from_message(msg: Any) -> Dict[str, Any]:
         """
         Extracts normalized data from an email.message object.
         """
@@ -158,17 +158,21 @@ class EmailParserService:
         plain_text_body, html_body = EmailParserService.extract_body(msg)
         body = plain_text_body if plain_text_body else html_body
         
-        urls = EmailParserService.extract_urls(plain_text_body, html_body)
+        # Extract URLs from body
+        urls = EmailParserService.extract_urls(body, html_body)
+
+        # Extract attachment telemetry (safe; does not execute or save malicious files)
         attachments = EmailParserService.extract_attachments(msg)
+
+        # Extract Authentication Headers
         authentication = EmailParserService.extract_authentication_results(msg)
 
         return {
             "sender": sender,
             "recipient": recipient,
-            "reply_to": reply_to,
+            "reply_to": reply_to if reply_to else None,
             "subject": subject,
             "body": body,
-            "html_body": html_body,
             "headers": headers_dict,
             "urls": urls,
             "attachments": attachments,
@@ -176,9 +180,9 @@ class EmailParserService:
         }
 
     @staticmethod
-    def extract_body(msg: EmailMessage) -> Tuple[str, str]:
+    def extract_body(msg: Any) -> Tuple[str, str]:
         """
-        Extracts plain-text and sanitized HTML body from a MIME message.
+        Safely extracts plain-text and HTML body contents from an email message.
         """
         plain_text_parts: List[str] = []
         html_parts: List[str] = []
@@ -194,7 +198,7 @@ class EmailParserService:
                     if not payload:
                         continue
                     charset = part.get_content_charset() or "utf-8"
-                    decoded_text = payload.decode(charset, errors="replace")
+                    decoded_text = payload.decode(charset, errors="replace") if isinstance(payload, bytes) else str(payload)
 
                     if content_type == "text/plain":
                         plain_text_parts.append(decoded_text)
@@ -207,7 +211,7 @@ class EmailParserService:
                 payload = msg.get_payload(decode=True)
                 if payload:
                     charset = msg.get_content_charset() or "utf-8"
-                    decoded_text = payload.decode(charset, errors="replace")
+                    decoded_text = payload.decode(charset, errors="replace") if isinstance(payload, bytes) else str(payload)
                     if msg.get_content_type() == "text/html":
                         html_parts.append(decoded_text)
                     else:

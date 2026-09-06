@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(current_dir, "..")))
 
 from ml.preprocess import combine_subject_body
 
-def load_data():
+def load_data() -> pd.DataFrame:
     datasets_dir = os.path.join(project_root, "datasets")
     phish_path = os.path.join(datasets_dir, "phishing_samples.csv")
     legit_path = os.path.join(datasets_dir, "legitimate_samples.csv")
@@ -35,8 +35,9 @@ def load_data():
     df_combined["text"] = df_combined.apply(lambda row: combine_subject_body(row["subject"], row["body"]), axis=1)
     
     # Drop any empty rows
-    df_combined = df_combined[df_combined["text"].str.strip().str.len() > 0]
-    return df_combined
+    mask = df_combined["text"].str.strip().str.len() > 0
+    return pd.DataFrame(df_combined[mask])
+
 
 def train_and_export():
     print("=" * 60)
@@ -45,7 +46,8 @@ def train_and_export():
 
     df = load_data()
     print(f"Total samples loaded: {len(df)}")
-    print(f"Class distribution:\n{df['label'].value_counts().to_dict()} (0: Legitimate, 1: Phishing)")
+    label_counts = pd.Series(df["label"]).value_counts().to_dict()
+    print(f"Class distribution:\n{label_counts} (0: Legitimate, 1: Phishing)")
 
     # Stratified Train/Test Split (80% Train, 20% Test) to prevent data leakage
     X_train, X_test, y_train, y_test = train_test_split(

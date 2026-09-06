@@ -2,36 +2,44 @@
 
 @layer base {
   :root {
-    --bg-main: #0b0f17;
-    --bg-card: #121824;
-    --bg-card-hover: #161f2e;
-    --bg-subtle: #192233;
-    --border-subtle: #1e293b;
-    --border-strong: #334155;
+    --bg-main: #080c14;
+    --bg-surface: #0e1524;
+    --bg-card: #111a2d;
+    --bg-card-hover: #16223b;
+    --bg-subtle: #1a2742;
+    --border-subtle: #1e2d4a;
+    --border-strong: #33476d;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     
-    /* SOC Restrained Status Colors (Solid, No Gradients) */
+    /* Modern Cybersecurity Accent & Status Colors */
+    --cyber-cyan: #0284c7;
+    --cyber-sky: #38bdf8;
     --status-safe: #10b981;
+    --status-safe-glow: rgba(16, 185, 129, 0.25);
     --status-medium: #f59e0b;
+    --status-medium-glow: rgba(245, 158, 11, 0.25);
     --status-high: #f97316;
+    --status-high-glow: rgba(249, 115, 22, 0.25);
     --status-critical: #ef4444;
+    --status-critical-glow: rgba(239, 68, 68, 0.25);
   }
 
   body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    min-height: 100vh;
   }
 
   code, pre, .font-mono {
-    font-family: "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
 
   /* Custom scrollbar for SOC tables and code views */
@@ -40,13 +48,64 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0b0f17;
+    background: #080c14;
   }
   ::-webkit-scrollbar-thumb {
-    background: #253347;
-    border-radius: 3px;
+    background: #1e2d4a;
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #33476d;
   }
+}
+
+/* Modern Solid Enterprise Cyber Card Utilities (No Gradients) */
+.cyber-card {
+  background-color: #0d1424;
+  border: 1px solid #1e2d4a;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-card:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.5);
+}
+
+.cyber-glass {
+  background-color: #090f1d;
+  border: 1px solid #1e2d4a;
+}
+
+/* Subtle glow badges */
+.glow-badge-safe {
+  box-shadow: 0 0 12px -2px rgba(16, 185, 129, 0.3);
+}
+
+.glow-badge-critical {
+  box-shadow: 0 0 14px -2px rgba(239, 68, 68, 0.35);
+}
+
+.glow-badge-cyan {
+  box-shadow: 0 0 12px -2px rgba(56, 189, 248, 0.3);
+}
+
+/* Radar Pulse Animation */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.pulse-radar {
+  animation: radar-pulse 2s infinite;
 }

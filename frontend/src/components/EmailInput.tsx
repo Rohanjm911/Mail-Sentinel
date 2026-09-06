@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Send, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { Send, Sparkles, ChevronDown, ChevronUp, AlertCircle, FileText, Mail } from "lucide-react";
 import type { PasteScanPayload } from "../services/api";
 
 interface EmailInputProps {
@@ -80,145 +80,165 @@ export const EmailInput: React.FC<EmailInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Sample Fill Buttons */}
-      <div className="flex flex-wrap items-center gap-2 p-3 bg-[#0b0f17] border border-[#1e293b] rounded-md">
-        <span className="text-[11px] font-mono text-[#94a3b8] flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-[#f59e0b]" />
-          <span>Quick Load Synthetic Samples:</span>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Sample Load Buttons */}
+      <div className="p-3.5 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl flex flex-wrap items-center justify-between gap-2.5">
+        <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5 font-semibold">
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span>LOAD REALISTIC SYNTHETIC SAMPLES:</span>
         </span>
-        <button
-          type="button"
-          onClick={() => handleSampleClick("phish1")}
-          className="px-2.5 py-1 rounded bg-[#121824] border border-[#ef4444]/30 text-[#ef4444] text-xs font-mono hover:bg-[#ef4444]/10 transition-colors"
-        >
-          PayPal Phish (Urgent + Link)
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSampleClick("phish2")}
-          className="px-2.5 py-1 rounded bg-[#121824] border border-[#f97316]/30 text-[#f97316] text-xs font-mono hover:bg-[#f97316]/10 transition-colors"
-        >
-          Invoice Scam (IP Host URL)
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSampleClick("legit1")}
-          className="px-2.5 py-1 rounded bg-[#121824] border border-[#10b981]/30 text-[#10b981] text-xs font-mono hover:bg-[#10b981]/10 transition-colors"
-        >
-          Legitimate Internal Email
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => handleSampleClick("phish1")}
+            className="px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono font-medium hover:bg-red-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+            <span>PayPal Phish (Urgent + Link)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSampleClick("phish2")}
+            className="px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-mono font-medium hover:bg-orange-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+            <span>Invoice Scam (IP Host URL)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSampleClick("legit1")}
+            className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-medium hover:bg-emerald-500/20 transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>Routine Business Email</span>
+          </button>
+        </div>
       </div>
 
       {validationError && (
-        <div className="p-3 bg-[#ef4444]/15 border border-[#ef4444]/40 rounded text-xs font-mono text-[#ef4444]">
-          {validationError}
+        <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs font-mono text-red-400 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{validationError}</span>
         </div>
       )}
 
       {/* From & To Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono text-[#94a3b8]">
-            From <span className="text-[#ef4444]">*</span>
+          <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-300">
+            From (Sender Address) <span className="text-red-400">*</span>
           </label>
-          <input
-            type="text"
-            value={fromAddress}
-            onChange={(e) => setFromAddress(e.target.value)}
-            placeholder="Security Team <security@example.com>"
-            className="w-full px-3 py-2 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#f8fafc] placeholder-[#64748b] focus:outline-none focus:border-[#334155]"
-          />
+          <div className="relative">
+            <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={fromAddress}
+              onChange={(e) => setFromAddress(e.target.value)}
+              placeholder="Display Name <sender@example.com>"
+              className="w-full pl-9 pr-3 py-2.5 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl text-xs font-mono text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500/60 focus:ring-1 focus:ring-sky-500/30 transition-all"
+            />
+          </div>
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-xs font-mono text-[#94a3b8]">
-            To (Recipient)
+          <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-300">
+            To (Recipient Address)
           </label>
-          <input
-            type="text"
-            value={toAddress}
-            onChange={(e) => setToAddress(e.target.value)}
-            placeholder="user@yourcompany.com"
-            className="w-full px-3 py-2 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#f8fafc] placeholder-[#64748b] focus:outline-none focus:border-[#334155]"
-          />
+          <div className="relative">
+            <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={toAddress}
+              onChange={(e) => setToAddress(e.target.value)}
+              placeholder="target.user@company.com"
+              className="w-full pl-9 pr-3 py-2.5 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl text-xs font-mono text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500/60 focus:ring-1 focus:ring-sky-500/30 transition-all"
+            />
+          </div>
         </div>
       </div>
 
       {/* Reply-To Field */}
       <div className="space-y-1.5">
-        <label className="block text-xs font-mono text-[#94a3b8]">
-          Reply-To (Optional)
+        <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-300">
+          Reply-To (Optional Header)
         </label>
         <input
           type="text"
           value={replyTo}
           onChange={(e) => setReplyTo(e.target.value)}
-          placeholder="reply@another-domain.com"
-          className="w-full px-3 py-2 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#f8fafc] placeholder-[#64748b] focus:outline-none focus:border-[#334155]"
+          placeholder="reply@another-domain.com (Leave empty if identical to From)"
+          className="w-full px-3 py-2.5 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl text-xs font-mono text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500/60 focus:ring-1 focus:ring-sky-500/30 transition-all"
         />
       </div>
 
-      {/* Subject */}
+      {/* Subject Line */}
       <div className="space-y-1.5">
-        <label className="block text-xs font-mono text-[#94a3b8]">
-          Subject <span className="text-[#ef4444]">*</span>
+        <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-300">
+          Email Subject <span className="text-red-400">*</span>
         </label>
-        <input
-          type="text"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          placeholder="Action Required: Verify Account Security"
-          className="w-full px-3 py-2 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#f8fafc] placeholder-[#64748b] focus:outline-none focus:border-[#334155]"
-        />
+        <div className="relative">
+          <FileText className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="Action Required: Confirm Identity / Urgent Notification"
+            className="w-full pl-9 pr-3 py-2.5 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl text-xs font-mono text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500/60 focus:ring-1 focus:ring-sky-500/30 transition-all"
+          />
+        </div>
       </div>
 
-      {/* Body */}
+      {/* Body Content */}
       <div className="space-y-1.5">
-        <label className="block text-xs font-mono text-[#94a3b8]">
-          Email Body (Plain Text or HTML) <span className="text-[#ef4444]">*</span>
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-300">
+            Email Body (Plain Text or HTML) <span className="text-red-400">*</span>
+          </label>
+          <span className="text-[10px] font-mono text-slate-400">
+            {body.length} characters
+          </span>
+        </div>
         <textarea
           rows={7}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Paste complete email message body here including hyperlinks..."
-          className="w-full px-3 py-2 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#f8fafc] placeholder-[#64748b] focus:outline-none focus:border-[#334155] leading-relaxed"
+          placeholder="Paste complete email message body here including hyperlinks, sign-offs, and disclaimer text..."
+          className="w-full p-3 bg-[#0a0f1d] border border-[#1e2d4a] rounded-xl text-xs font-mono text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500/60 focus:ring-1 focus:ring-sky-500/30 transition-all leading-relaxed"
         />
       </div>
 
       {/* Optional Raw Headers Dropdown */}
-      <div className="border border-[#1e293b] rounded bg-[#0b0f17] overflow-hidden">
+      <div className="border border-[#1e2d4a] rounded-xl bg-[#0a0f1d] overflow-hidden">
         <button
           type="button"
           onClick={() => setShowHeaders(!showHeaders)}
-          className="w-full px-3 py-2 flex items-center justify-between text-xs font-mono text-[#94a3b8] hover:text-[#f8fafc] transition-colors cursor-pointer"
+          className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-mono text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
         >
           <span>Optional Raw RFC Headers (Authentication-Results, Received, Return-Path)</span>
-          {showHeaders ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          {showHeaders ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
         {showHeaders && (
-          <div className="p-3 border-t border-[#1e293b]">
+          <div className="p-3.5 border-t border-[#1e2d4a] bg-[#070b14]">
             <textarea
               rows={4}
               value={rawHeaders}
               onChange={(e) => setRawHeaders(e.target.value)}
-              placeholder="Received: from mail.server.com...&#10;Authentication-Results: spf=fail dkim=fail..."
-              className="w-full p-2 bg-[#121824] border border-[#1e293b] rounded text-[11px] font-mono text-[#cbd5e1] placeholder-[#64748b] focus:outline-none focus:border-[#334155]"
+              placeholder="Received: from mail.server.com...&#10;Authentication-Results: spf=fail dkim=fail dmarc=fail..."
+              className="w-full p-2.5 bg-[#0d1424] border border-[#1e2d4a] rounded-lg text-[11px] font-mono text-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500/60"
             />
           </div>
         )}
       </div>
 
-      {/* Submit Button */}
+      {/* Primary Submit Button */}
       <div className="pt-2">
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 px-4 rounded bg-[#1e293b] hover:bg-[#334155] text-sm font-mono font-semibold text-[#f8fafc] border border-[#334155] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
+          className="w-full py-3.5 px-6 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold shadow-md border border-sky-400/40 flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-50"
         >
           <Send className="w-4 h-4" />
-          <span>{isLoading ? "Running Threat Analysis..." : "Analyze Email"}</span>
+          <span>{isLoading ? "Running Forensic Threat Analysis..." : "Scan Email for Phishing Threats"}</span>
         </button>
       </div>
     </form>
