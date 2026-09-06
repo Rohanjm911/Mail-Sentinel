@@ -1,0 +1,27 @@
+From: "Alex Turner" <alex.turner@company.com>
+To: dev-team@company.com
+Subject: Weekly Engineering Standup Notes - Sprint 42
+Date: Sun, 06 Sep 2026 10:00:00 +0000
+Message-ID: <standup.42.20260906@company.com>
+Return-Path: <alex.turner@company.com>
+Received-SPF: pass (google.com: domain of alex.turner@company.com designates 198.51.100.12 as permitted sender)
+Authentication-Results: mx.google.com;
+       spf=pass smtp.mailfrom=alex.turner@company.com;
+       dkim=pass header.i=@company.com header.s=202601;
+       dmarc=pass (p=REJECT) header.from=company.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Team,
+
+Here is a recap of today's sprint standup:
+1. Front-end team completed the user profile redesign and responsive tables.
+2. Backend team finalized the database migration scripts and resolved issue #302.
+3. Next code freeze is scheduled for Thursday at 4:00 PM.
+
+Please review pull request #142 by tomorrow afternoon:
+https://github.com/company/mail-sentinel/pull/142
+
+Best regards,
+Alex Turner
+Engineering Lead

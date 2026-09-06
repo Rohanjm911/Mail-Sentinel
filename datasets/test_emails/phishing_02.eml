@@ -1,0 +1,31 @@
+From: "HR Payroll Department" <payroll@global-hr-portal.top>
+Reply-To: bad-actor-collector@protonmail.com
+To: accounting@enterprise.com
+Subject: OVERDUE INVOICE #INV-2026-9182 - Final Legal Notice
+Date: Sun, 06 Sep 2026 15:10:00 +0000
+Message-ID: <payroll.91823@global-hr-portal.top>
+Authentication-Results: mx.google.com;
+       spf=softfail smtp.mailfrom=payroll@global-hr-portal.top;
+       dkim=none;
+       dmarc=none
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="====BOUNDARY_PHISH_02===="
+
+--====BOUNDARY_PHISH_02====
+Content-Type: text/plain; charset="UTF-8"
+
+Please find attached overdue invoice #INV-2026-9182.
+Total amount past due: $14,850.00.
+Remittance must be wired by close of business today to halt impending legal arbitration.
+Review the attached remittance authorization form immediately.
+
+Corporate Accounts Payable
+--====BOUNDARY_PHISH_02====
+Content-Type: application/x-msdownload; name="invoice_remittance_sep2026.pdf.exe"
+Content-Disposition: attachment; filename="invoice_remittance_sep2026.pdf.exe"
+Content-Transfer-Encoding: base64
+
+TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAyAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
+ZGUuDQ0KJAAAAAAAAAA=
+--====BOUNDARY_PHISH_02====--

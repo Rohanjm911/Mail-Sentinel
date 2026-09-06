@@ -1,0 +1,23 @@
+From: "GitHub Notifications" <notifications@github.com>
+To: rohan.jm@enterprise.com
+Subject: [GitHub] Pull Request #142 approved and merged (company/mail-sentinel)
+Date: Sun, 06 Sep 2026 11:30:15 +0000
+Message-ID: <company/mail-sentinel/pull/142/merged@github.com>
+Return-Path: <noreply@github.com>
+Received-SPF: pass (google.com: domain of noreply@github.com designates 192.30.252.200 as permitted sender)
+Authentication-Results: mx.google.com;
+       spf=pass smtp.mailfrom=noreply@github.com;
+       dkim=pass header.i=@github.com header.s=pf2014;
+       dmarc=pass (p=REJECT) header.from=github.com
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<!DOCTYPE html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #24292f;">
+  <p>Hi Rohan,</p>
+  <p>Your pull request <strong>#142</strong> (<a href="https://github.com/company/mail-sentinel/pull/142">Optimize database queries for scan results</a>) was reviewed, approved, and merged into <code>main</code> by Sarah Chen.</p>
+  <p>All automated checks passed.</p>
+  <p style="font-size: 12px; color: #57604a;">GitHub, Inc. &bull; 88 Colin P Kelly Jr St, San Francisco, CA 94107</p>
+</body>
+</html>
