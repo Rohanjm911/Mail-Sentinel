@@ -23,6 +23,11 @@
 
 ---
 
+<!-- Live Animated Threat Radar & Activity Ring Gauge -->
+<p align="center">
+  <img src="./docs/radar_animation.svg" alt="Mail Sentinel Live Radar & Risk Gauge Animation" width="100%" />
+</p>
+
 </div>
 
 ## 🌟 Executive Overview
@@ -39,7 +44,12 @@ Designed with an **Apple-inspired macOS & visionOS frosted dark design language*
 
 ---
 
-## 🚀 Detection Architecture & Workflow
+## 🚀 Live Detection Pipeline Flow
+
+<!-- Live Animated Detection Pipeline Flowchart with moving packets -->
+<p align="center">
+  <img src="./docs/pipeline_animation.svg" alt="Mail Sentinel 6-Pillar Animated Pipeline" width="100%" />
+</p>
 
 ```mermaid
 flowchart TD
@@ -71,6 +81,15 @@ flowchart TD
     D --> F2[📋 Granular Finding Cards & Evidence Exporters]:::output
     D --> F3[🛡️ Actionable SOC Remediation Playbook]:::output
 ```
+
+---
+
+## 💻 Live Animated SOC Terminal Demonstration
+
+<!-- Live Animated SOC Terminal Demonstration -->
+<p align="center">
+  <img src="./docs/terminal_demo.svg" alt="Mail Sentinel Animated Terminal Execution" width="100%" />
+</p>
 
 ---
 
@@ -268,6 +287,10 @@ Mail Sentinel/
 │   │   └── evaluate.py          # Metrics & confusion matrix evaluator
 │   ├── tests/                   # 26 Pytest automated test suites
 │   └── requirements.txt
+├── docs/
+│   ├── pipeline_animation.svg   # Live animated detection pipeline
+│   ├── terminal_demo.svg        # Live animated terminal scan execution
+│   └── radar_animation.svg      # Live animated threat radar & Activity Ring
 ├── frontend/
 │   ├── public/
 │   │   └── logo.png             # Web application logo & favicon

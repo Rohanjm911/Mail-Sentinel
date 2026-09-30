@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 260" width="100%" height="100%" style="background: #09090b; border-radius: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141418"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+
+    <!-- Radar Sweep Gradient -->
+    <radialGradient id="radarSweep" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0a84ff" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#0a84ff" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#0a84ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .radar-sweep-beam {
+      transform-origin: 130px 130px;
+      animation: rotateRadar 3.5s linear infinite;
+    }
+    @keyframes rotateRadar {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .radar-blip-1 {
+      animation: blip1 3.5s infinite;
+    }
+    @keyframes blip1 {
+      0%, 25% { opacity: 0; transform: scale(0.6); }
+      30% { opacity: 1; transform: scale(1.3); }
+      60% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0; }
+    }
+
+    .radar-blip-2 {
+      animation: blip2 3.5s infinite 1.2s;
+    }
+    @keyframes blip2 {
+      0%, 25% { opacity: 0; transform: scale(0.6); }
+      30% { opacity: 1; transform: scale(1.3); }
+      60% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0; }
+    }
+
+    .ring-fill-animation {
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      animation: fillRing 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fillRing {
+      to { stroke-dashoffset: 80; }
+    }
+
+    .pulse-glow-card {
+      animation: pulseCard 3s ease-in-out infinite;
+    }
+    @keyframes pulseCard {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(10, 132, 255, 0.2)); }
+      50% { filter: drop-shadow(0 0 16px rgba(10, 132, 255, 0.5)); }
+    }
+  </style>
+
+  <!-- Container Base -->
+  <rect width="880" height="260" rx="20" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5"/>
+
+  <!-- Left: Live Threat Radar Scanner -->
+  <g transform="translate(10, 0)">
+    <!-- Radar concentric circles -->
+    <circle cx="130" cy="130" r="100" fill="#0d0d12" stroke="rgba(10, 132, 255, 0.18)" stroke-width="1.5"/>
+    <circle cx="130" cy="130" r="75" fill="none" stroke="rgba(10, 132, 255, 0.12)" stroke-width="1" stroke-dasharray="4 4"/>
+    <circle cx="130" cy="130" r="50" fill="none" stroke="rgba(10, 132, 255, 0.16)" stroke-width="1"/>
+    <circle cx="130" cy="130" r="25" fill="none" stroke="rgba(10, 132, 255, 0.2)" stroke-width="1"/>
+    
+    <!-- Crosshairs -->
+    <line x1="130" y1="20" x2="130" y2="240" stroke="rgba(10, 132, 255, 0.15)" stroke-width="1"/>
+    <line x1="20" y1="130" x2="240" y2="130" stroke="rgba(10, 132, 255, 0.15)" stroke-width="1"/>
+
+    <!-- Rotating Radar Beam -->
+    <g class="radar-sweep-beam">
+      <path d="M 130 130 L 230 130 A 100 100 0 0 0 200 60 Z" fill="url(#radarSweep)"/>
+      <line x1="130" y1="130" x2="230" y2="130" stroke="#0a84ff" stroke-width="2"/>
+    </g>
+
+    <!-- Pulsing Radar Threat Targets -->
+    <g transform="translate(130, 130)">
+      <!-- Target 1 -->
+      <circle cx="50" cy="-35" r="5" fill="#ff453a" class="radar-blip-1"/>
+      <circle cx="50" cy="-35" r="10" fill="none" stroke="#ff453a" stroke-width="1" class="radar-blip-1"/>
+      
+      <!-- Target 2 -->
+      <circle cx="-40" cy="45" r="4" fill="#ff9f0a" class="radar-blip-2"/>
+      <circle cx="-40" cy="45" r="8" fill="none" stroke="#ff9f0a" stroke-width="1" class="radar-blip-2"/>
+    </g>
+
+    <text x="130" y="248" text-anchor="middle" fill="#86868b" font-size="10" font-weight="600" letter-spacing="0.05em">LIVE HEURISTIC RADAR</text>
+  </g>
+
+  <!-- Center: Apple Watch Activity Ring Risk Score Display -->
+  <g transform="translate(290, 20)">
+    <rect width="270" height="220" rx="18" fill="#16161b" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+    
+    <!-- Title -->
+    <text x="135" y="32" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">Activity Ring Risk Meter</text>
+
+    <!-- Outer Track Activity Ring -->
+    <g transform="translate(135, 115)">
+      <circle cx="0" cy="0" r="60" fill="none" stroke="rgba(255, 255, 255, 0.06)" stroke-width="12"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#ff453a" stroke-width="12" stroke-linecap="round"
+              class="ring-fill-animation" transform="rotate(-90)"/>
+      
+      <text x="0" y="8" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="800">88</text>
+      <text x="0" y="24" text-anchor="middle" fill="#ff453a" font-size="10" font-weight="700">SCORE / 100</text>
+    </g>
+
+    <!-- Verdict Pill -->
+    <rect x="75" y="185" width="120" height="22" rx="11" fill="rgba(255, 69, 58, 0.15)" stroke="rgba(255, 69, 58, 0.3)" stroke-width="1"/>
+    <text x="135" y="200" text-anchor="middle" fill="#ff453a" font-size="10" font-weight="800" letter-spacing="0.08em">HIGH PHISH RISK</text>
+  </g>
+
+  <!-- Right: Key Defense Telemetry Metrics -->
+  <g transform="translate(580, 20)">
+    <rect width="270" height="220" rx="18" fill="#16161b" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+    
+    <text x="24" y="32" fill="#ffffff" font-size="12" font-weight="700">Defense Specifications</text>
+    <circle cx="240" cy="28" r="4" fill="#30d158"/>
+
+    <!-- Spec 1 -->
+    <g transform="translate(24, 52)">
+      <text x="0" y="0" fill="#86868b" font-size="11">ML Accuracy</text>
+      <text x="220" y="0" text-anchor="end" fill="#30d158" font-size="12" font-weight="700">98.28%</text>
+      <line x1="0" y1="10" x2="220" y2="10" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+    </g>
+
+    <!-- Spec 2 -->
+    <g transform="translate(24, 88)">
+      <text x="0" y="0" fill="#86868b" font-size="11">Phishing Recall</text>
+      <text x="220" y="0" text-anchor="end" fill="#0a84ff" font-size="12" font-weight="700">100.00%</text>
+      <line x1="0" y1="10" x2="220" y2="10" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+    </g>
+
+    <!-- Spec 3 -->
+    <g transform="translate(24, 124)">
+      <text x="0" y="0" fill="#86868b" font-size="11">Triage Latency</text>
+      <text x="220" y="0" text-anchor="end" fill="#ff9f0a" font-size="12" font-weight="700">&lt; 14ms</text>
+      <line x1="0" y1="10" x2="220" y2="10" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+    </g>
+
+    <!-- Spec 4 -->
+    <g transform="translate(24, 160)">
+      <text x="0" y="0" fill="#86868b" font-size="11">Cloud Data Leakage</text>
+      <text x="220" y="0" text-anchor="end" fill="#30d158" font-size="12" font-weight="700">0.00% (Air-Gapped)</text>
+    </g>
+
+    <!-- Status pill -->
+    <rect x="24" y="182" width="220" height="24" rx="12" fill="rgba(48, 209, 88, 0.12)" stroke="rgba(48, 209, 88, 0.25)" stroke-width="1"/>
+    <text x="134" y="198" text-anchor="middle" fill="#30d158" font-size="10" font-weight="700">● TIER-2 SOC ENGINE READY</text>
+  </g>
+</svg>

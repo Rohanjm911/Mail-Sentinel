@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="100%" height="100%" style="background: #09090b; border-radius: 20px; font-family: 'SF Mono', 'JetBrains Mono', Monaco, Menlo, Consolas, monospace;">
+  <defs>
+    <linearGradient id="termGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141418"/>
+      <stop offset="100%" stop-color="#0a0a0d"/>
+    </linearGradient>
+
+    <filter id="termShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <style>
+    .cursor-blink {
+      animation: cursorBlink 0.9s infinite;
+    }
+    @keyframes cursorBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .fade-line-1 { animation: fadeIn 0.4s ease 0.3s forwards; opacity: 0; }
+    .fade-line-2 { animation: fadeIn 0.4s ease 0.8s forwards; opacity: 0; }
+    .fade-line-3 { animation: fadeIn 0.4s ease 1.3s forwards; opacity: 0; }
+    .fade-line-4 { animation: fadeIn 0.4s ease 1.8s forwards; opacity: 0; }
+    .fade-line-5 { animation: fadeIn 0.4s ease 2.3s forwards; opacity: 0; }
+    .fade-line-6 { animation: fadeIn 0.4s ease 2.8s forwards; opacity: 0; }
+    .fade-line-7 { animation: fadeIn 0.4s ease 3.3s forwards; opacity: 0; }
+    .fade-line-8 { animation: fadeIn 0.4s ease 3.8s forwards; opacity: 0; }
+    .fade-line-9 { animation: fadeIn 0.4s ease 4.3s forwards; opacity: 0; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pulse-alert {
+      animation: pulseAlert 2s infinite ease-in-out;
+    }
+    @keyframes pulseAlert {
+      0%, 100% { fill: #ff453a; }
+      50% { fill: #ff9f0a; }
+    }
+  </style>
+
+  <!-- Terminal Window Base -->
+  <rect width="880" height="400" rx="20" fill="url(#termGrad)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5" filter="url(#termShadow)"/>
+
+  <!-- macOS Top Window Titlebar -->
+  <rect width="880" height="44" rx="20" fill="rgba(255, 255, 255, 0.04)"/>
+  <line x1="0" y1="44" x2="880" y2="44" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+
+  <!-- Traffic Lights -->
+  <circle cx="26" cy="22" r="6" fill="#ff5f56" stroke="#e0443e" stroke-width="0.5"/>
+  <circle cx="46" cy="22" r="6" fill="#ffbd2e" stroke="#dea123" stroke-width="0.5"/>
+  <circle cx="66" cy="22" r="6" fill="#27c93f" stroke="#1aab29" stroke-width="0.5"/>
+
+  <!-- Title -->
+  <text x="440" y="27" text-anchor="middle" fill="#86868b" font-size="12" font-weight="600">soc-analyst@mail-sentinel-node-01: ~ (zsh)</text>
+
+  <!-- Terminal Body Content -->
+  <g transform="translate(30, 75)" font-size="12.5" line-height="1.6">
+    
+    <!-- Command Execution -->
+    <g class="fade-line-1">
+      <text x="0" y="0" fill="#30d158" font-weight="700">➜</text>
+      <text x="18" y="0" fill="#0a84ff" font-weight="700">~/mail-sentinel</text>
+      <text x="145" y="0" fill="#ffffff">python -m app.triage --scan sample_phish.eml --explain</text>
+    </g>
+
+    <!-- Engine Boot Info -->
+    <g class="fade-line-2" transform="translate(0, 26)">
+      <text x="0" y="0" fill="#86868b">[INFO]</text>
+      <text x="55" y="0" fill="#ffffff">Initializing Mail Sentinel Air-Gap Triage Pipeline...</text>
+      <text x="540" y="0" fill="#30d158">[ZERO-CLOUD-EGRESS]</text>
+    </g>
+
+    <!-- Engine Ingestion Check -->
+    <g class="fade-line-3" transform="translate(0, 52)">
+      <text x="0" y="0" fill="#0a84ff">●</text>
+      <text x="18" y="0" fill="#ffffff">RFC 5322 MIME Parser:</text>
+      <text x="210" y="0" fill="#30d158">OK</text>
+      <text x="240" y="0" fill="#86868b">(Subject: "URGENT: Executive Wire Transfer Required", Size: 48.2 KB)</text>
+    </g>
+
+    <!-- SPF / DKIM Result -->
+    <g class="fade-line-4" transform="translate(0, 78)">
+      <text x="0" y="0" fill="#ff453a">▲</text>
+      <text x="18" y="0" fill="#ffffff">Authentication Engine:</text>
+      <text x="210" y="0" fill="#ff453a" font-weight="700">SPF FAIL</text>
+      <text x="290" y="0" fill="#ff453a" font-weight="700">DMARC FAIL</text>
+      <text x="390" y="0" fill="#86868b">(Sender domain spoofed: return-path mismatch)</text>
+    </g>
+
+    <!-- Lexical & URL Triggers -->
+    <g class="fade-line-5" transform="translate(0, 104)">
+      <text x="0" y="0" fill="#ff9f0a">▲</text>
+      <text x="18" y="0" fill="#ffffff">Lexical &amp; Link Intel:</text>
+      <text x="210" y="0" fill="#ff9f0a">Raw IP URL Host detected</text>
+      <text x="420" y="0" fill="#86868b">(http://185.220.101.5/login-auth/)</text>
+    </g>
+
+    <!-- Local ML Classification -->
+    <g class="fade-line-6" transform="translate(0, 130)">
+      <text x="0" y="0" fill="#30d158">●</text>
+      <text x="18" y="0" fill="#ffffff">Local Naive Bayes ML:</text>
+      <text x="210" y="0" fill="#ff453a" font-weight="700">Phishing Probability: 99.82%</text>
+      <text x="470" y="0" fill="#86868b">(Latency: 8.4ms)</text>
+    </g>
+
+    <!-- Horizontal Divider -->
+    <g class="fade-line-7" transform="translate(0, 156)">
+      <line x1="0" y1="0" x2="820" y2="0" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1"/>
+    </g>
+
+    <!-- Assessment Result Verdict Box -->
+    <g class="fade-line-8" transform="translate(0, 186)">
+      <rect x="0" y="-14" width="820" height="54" rx="10" fill="rgba(255, 69, 58, 0.12)" stroke="rgba(255, 69, 58, 0.3)" stroke-width="1"/>
+      <text x="18" y="10" fill="#ff453a" font-size="14" font-weight="800" class="pulse-alert">🚨 FINAL VERDICT: CRITICAL THREAT</text>
+      <text x="320" y="10" fill="#ffffff" font-size="13" font-weight="700">Risk Score: 94/100</text>
+      <text x="490" y="10" fill="#86868b" font-size="12">Confidence: 99.1%</text>
+      <text x="640" y="10" fill="#30d158" font-size="11" font-weight="600">[Action: Quarantine]</text>
+      <text x="18" y="28" fill="#ff9f0a" font-size="11">Playbook: 1. Purge email from Exchange • 2. Block domain in gateway • 3. Revoke active JWT session</text>
+    </g>
+
+    <!-- Blinking Prompt Cursor -->
+    <g class="fade-line-9" transform="translate(0, 260)">
+      <text x="0" y="0" fill="#30d158" font-weight="700">➜</text>
+      <text x="18" y="0" fill="#0a84ff" font-weight="700">~/mail-sentinel</text>
+      <rect x="145" y="-12" width="8" height="15" fill="#0a84ff" class="cursor-blink"/>
+    </g>
+
+  </g>
+</svg>
