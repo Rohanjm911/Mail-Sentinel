@@ -55,13 +55,13 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUpload, isLoading 
   return (
     <div className="space-y-4">
       {errorMessage && (
-        <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs font-mono text-red-400 flex items-center gap-2.5">
+        <div className="p-3.5 bg-[#ff453a]/10 border border-[#ff453a]/30 rounded-2xl text-xs text-[#ff453a] flex items-center gap-2.5 backdrop-blur-md">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      {/* Drop Zone */}
+      {/* Apple Styled Drop Zone */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -70,10 +70,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUpload, isLoading 
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`relative p-10 border-2 border-dashed rounded-2xl text-center cursor-pointer transition-all duration-200 group ${
+        className={`relative p-10 md:p-12 border-2 border-dashed rounded-3xl text-center cursor-pointer transition-all duration-300 group ${
           dragOver
-            ? "border-sky-400 bg-sky-500/10 shadow-xl shadow-sky-500/10 scale-[0.99]"
-            : "border-[#1e2d4a] bg-[#0a0f1d]/70 hover:border-sky-500/40 hover:bg-[#111a2d]/50"
+            ? "border-[#0a84ff] bg-[#0a84ff]/10 shadow-2xl scale-[0.99]"
+            : "border-white/[0.12] bg-white/[0.02] hover:border-white/[0.25] hover:bg-white/[0.04]"
         }`}
       >
         <input
@@ -85,24 +85,24 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUpload, isLoading 
         />
 
         <div className="flex flex-col items-center justify-center space-y-3">
-          <div className="p-4 rounded-2xl bg-[#0f172a] border border-sky-500/30 text-sky-400 group-hover:scale-110 group-hover:border-sky-400 transition-all duration-200 shadow-md">
+          <div className="p-4 rounded-3xl bg-white/[0.05] border border-white/[0.1] text-[#0a84ff] group-hover:scale-105 group-hover:border-[#0a84ff]/40 transition-all duration-300 shadow-md">
             <UploadCloud className="w-8 h-8" />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-100 tracking-tight font-sans">
-              Drag &amp; drop an <span className="font-mono text-sky-400">.EML</span> email file here, or click to browse
+            <p className="text-sm font-semibold text-white tracking-tight font-sans">
+              Drag &amp; drop an <span className="font-mono text-[#0a84ff]">.EML</span> file here, or click to browse
             </p>
-            <p className="text-xs text-slate-400 font-mono mt-1">
+            <p className="text-xs text-white/50 mt-1">
               Supports RFC 822 / 5322 .eml messages exported from Outlook, Thunderbird, or Gmail (Max 15MB)
             </p>
           </div>
 
-          <div className="flex items-center gap-2 pt-1">
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#111a2d] border border-[#1e2d4a] text-slate-400">
-              Safe Ingestion: Zero Script Execution
+          <div className="flex items-center gap-2 pt-2">
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/50 font-medium">
+              Zero Script Execution
             </span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#111a2d] border border-[#1e2d4a] text-emerald-400">
-              Local Parser
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#30d158]/10 border border-[#30d158]/25 text-[#30d158] font-medium">
+              Air-Gapped Ingestion
             </span>
           </div>
         </div>
@@ -110,29 +110,29 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUpload, isLoading 
 
       {/* Selected File Card */}
       {selectedFile && (
-        <div className="p-4 rounded-xl cyber-card border border-sky-500/30 flex items-center justify-between gap-4 animate-in fade-in duration-200">
+        <div className="p-4 rounded-2xl apple-card flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in duration-300">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="p-2.5 rounded-lg bg-sky-500/10 border border-sky-500/25 text-sky-400 shrink-0">
+            <div className="p-2.5 rounded-xl bg-[#0a84ff]/15 border border-[#0a84ff]/25 text-[#0a84ff] shrink-0">
               <FileText className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold font-mono text-slate-100 truncate">
+              <p className="text-xs font-semibold text-white truncate font-mono">
                 {selectedFile.name}
               </p>
-              <p className="text-[11px] font-mono text-slate-400 mt-0.5">
+              <p className="text-[11px] text-white/50 mt-0.5 font-mono">
                 {(selectedFile.size / 1024).toFixed(1)} KB • Ready for deep multi-engine inspection
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedFile(null);
               }}
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
+              className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/[0.1] transition-colors"
               title="Remove File"
             >
               <X className="w-4 h-4" />
@@ -141,7 +141,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUpload, isLoading 
               type="button"
               onClick={handleAnalyzeClick}
               disabled={isLoading}
-              className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-sm border border-sky-400/30 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="apple-btn-primary px-5 py-2 text-xs flex items-center gap-2 font-medium"
             >
               <FileCheck className="w-3.5 h-3.5" />
               <span>{isLoading ? "Analyzing MIME Stream..." : "Inspect .EML for Threats"}</span>

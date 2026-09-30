@@ -25,7 +25,7 @@ export const StatCard: React.FC<StatCardProps> = ({
     if (!countRef.current) return;
     const strVal = String(value);
     const rawNum = typeof value === "number" ? value : parseFloat(strVal.replace(/,/g, ""));
-    
+
     if (isNaN(rawNum)) {
       countRef.current.textContent = strVal;
       return;
@@ -37,7 +37,7 @@ export const StatCard: React.FC<StatCardProps> = ({
     animate(obj, {
       val: rawNum,
       ease: "outExpo",
-      duration: 1100,
+      duration: 1000,
       onUpdate: () => {
         if (countRef.current) {
           if (hasDecimal) {
@@ -50,59 +50,50 @@ export const StatCard: React.FC<StatCardProps> = ({
     });
   }, [value]);
 
-  let badgeStyle = "text-slate-400 bg-slate-800/60 border-slate-700/60";
-  let iconGlow = "text-sky-400 bg-sky-500/10 border-sky-500/25";
-  let topBarColor = "bg-sky-500";
+  // Apple System Color Tokens for Cards
+  let badgeStyle = "text-white/60 bg-white/[0.08] border-white/[0.1]";
+  let iconBg = "bg-[#0a84ff]/15 text-[#0a84ff] border-[#0a84ff]/25";
 
   if (badgeType === "safe") {
-    badgeStyle = "text-emerald-400 bg-emerald-500/10 border-emerald-500/30 glow-badge-safe";
-    iconGlow = "text-emerald-400 bg-emerald-500/10 border-emerald-500/25";
-    topBarColor = "bg-emerald-500";
+    badgeStyle = "text-[#30d158] bg-[#30d158]/15 border-[#30d158]/30 glow-badge-safe";
+    iconBg = "bg-[#30d158]/15 text-[#30d158] border-[#30d158]/30";
   } else if (badgeType === "warning") {
-    badgeStyle = "text-amber-400 bg-amber-500/10 border-amber-500/30";
-    iconGlow = "text-amber-400 bg-amber-500/10 border-amber-500/25";
-    topBarColor = "bg-amber-500";
+    badgeStyle = "text-[#ff9f0a] bg-[#ff9f0a]/15 border-[#ff9f0a]/30";
+    iconBg = "bg-[#ff9f0a]/15 text-[#ff9f0a] border-[#ff9f0a]/30";
   } else if (badgeType === "danger") {
-    badgeStyle = "text-red-400 bg-red-500/10 border-red-500/30 glow-badge-critical";
-    iconGlow = "text-red-400 bg-red-500/10 border-red-500/25";
-    topBarColor = "bg-red-500";
+    badgeStyle = "text-[#ff453a] bg-[#ff453a]/15 border-[#ff453a]/30 glow-badge-critical";
+    iconBg = "bg-[#ff453a]/15 text-[#ff453a] border-[#ff453a]/30";
   }
 
   return (
-    <div className="relative overflow-hidden rounded-xl cyber-card p-5 flex flex-col justify-between group transition-transform duration-200 hover:-translate-y-0.5">
-      {/* Top clean solid accent bar */}
-      <div className={`absolute top-0 left-0 right-0 h-[2px] ${topBarColor}`} />
-
-      {/* Watermarked Icon in Background */}
-      <Icon className="absolute -right-2 -bottom-2 w-20 h-20 text-slate-800/20 group-hover:text-slate-700/30 transition-colors pointer-events-none -z-0" />
-
-      <div className="relative z-10">
+    <div className="apple-card relative p-5 flex flex-col justify-between group transition-all duration-300">
+      <div>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400">
+          <span className="text-xs font-medium text-white/50 tracking-tight">
             {title}
           </span>
-          <div className={`p-2 rounded-lg border ${iconGlow} shadow-sm transition-transform group-hover:scale-110 duration-200`}>
+          <div className={`p-2.5 rounded-2xl border ${iconBg} shadow-sm transition-transform duration-300 group-hover:scale-105`}>
             <Icon className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="mt-4 flex items-baseline justify-between">
-          <div className="text-3xl font-extrabold font-mono text-slate-100 tracking-tight">
+        <div className="mt-3 flex items-baseline justify-between gap-2">
+          <div className="text-3xl font-bold tracking-tight text-white font-sans">
             <span ref={countRef}>{value}</span>
           </div>
           {badgeText && (
-            <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${badgeStyle}`}>
+            <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border tracking-tight ${badgeStyle}`}>
               {badgeText}
             </span>
           )}
         </div>
-
-        {subtitle && (
-          <div className="mt-2 text-xs text-slate-400 font-sans line-clamp-1">
-            {subtitle}
-          </div>
-        )}
       </div>
+
+      {subtitle && (
+        <div className="mt-3 pt-2.5 border-t border-white/[0.06] text-xs text-white/45 font-normal tracking-tight line-clamp-1">
+          {subtitle}
+        </div>
+      )}
     </div>
   );
 };

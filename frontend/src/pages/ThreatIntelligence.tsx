@@ -105,98 +105,60 @@ export const ThreatIntelligence: React.FC = () => {
       setLookupError(null);
       const res = await ScanService.lookupIOC(type, cleaned);
       setLookupResult(res);
+
       setRecentSearches((prev) => {
-        const updated = [
-          { type, value: cleaned, timestamp: Date.now() },
-          ...prev.filter((item) => item.value !== cleaned),
-        ].slice(0, 8);
+        const filtered = prev.filter((item) => !(item.type === type && item.value === cleaned));
+        const updated = [{ type, value: cleaned, timestamp: Date.now() }, ...filtered].slice(0, 8);
         try {
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
         } catch (e) {
-          console.error("Could not save recent search:", e);
+          console.error("Failed to save IOC search history:", e);
         }
         return updated;
       });
     } catch (err: any) {
-      const errMsg =
-        err?.response?.data?.error?.message ||
-        err?.message ||
-        "An unexpected error occurred during IOC analysis.";
-      setLookupError(errMsg);
+      setLookupError(err?.response?.data?.error?.message || "Failed to analyze specified indicator.");
       setLookupResult(null);
     } finally {
       setLookupLoading(false);
     }
   }, []);
 
-  // Load feed provider statuses on mount
   useEffect(() => {
     let ignore = false;
-    async function fetchStatus() {
+    async function loadAdapters() {
       try {
-        const res = await ScanService.getThreatIntelStatus();
+        setLoading(true);
+        const data = await ScanService.getThreatIntelProviders();
         if (!ignore) {
-          setProviders(res.providers || []);
+          setProviders(data);
           setLoading(false);
         }
       } catch (err) {
-        if (!ignore) {
-          console.error("Failed to load threat intel status:", err);
-          setLoading(false);
-        }
+        console.error(err);
+        if (!ignore) setLoading(false);
       }
     }
-
-    fetchStatus();
+    loadAdapters();
     return () => {
       ignore = true;
     };
   }, []);
 
-  // Check URL query parameters on mount or param changes
   useEffect(() => {
     const iocParam = searchParams.get("ioc");
     const typeParam = searchParams.get("type");
-
-    if (iocParam && iocParam.trim()) {
-      const queryVal = iocParam.trim();
-      const validTypes: Array<"url" | "domain" | "ip"> = ["url", "domain", "ip"];
-      const resolvedType = validTypes.includes(typeParam as any)
-        ? (typeParam as "url" | "domain" | "ip")
-        : "url";
-
-      let ignore = false;
-      async function query() {
-        try {
-          const res = await ScanService.lookupIOC(resolvedType, queryVal);
-          if (!ignore) {
-            setLookupResult(res);
-            setLookupError(null);
-            setLookupLoading(false);
-          }
-        } catch (err: any) {
-          if (!ignore) {
-            const errMsg =
-              err?.response?.data?.error?.message ||
-              err?.message ||
-              "An unexpected error occurred during IOC analysis.";
-            setLookupError(errMsg);
-            setLookupResult(null);
-            setLookupLoading(false);
-          }
-        }
-      }
-      query();
-      return () => {
-        ignore = true;
-      };
+    if (iocParam) {
+      const validT = typeParam === "domain" || typeParam === "ip" ? typeParam : "url";
+      setSearchType(validT);
+      setSearchValue(iocParam);
+      runLookup(validT, iocParam);
     }
-  }, [searchParams]);
+  }, [searchParams, runLookup]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchValue.trim()) return;
-    // Update query params to allow bookmarking / sharing
     setSearchParams({ ioc: searchValue.trim(), type: searchType });
     runLookup(searchType, searchValue.trim());
   };
@@ -216,48 +178,47 @@ export const ThreatIntelligence: React.FC = () => {
 
   const analysis = lookupResult?.analysis;
 
-  // Compute color scheme based on score
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-[#ef4444]";
-    if (score >= 60) return "text-[#f97316]";
-    if (score >= 30) return "text-[#f59e0b]";
-    return "text-[#10b981]";
+    if (score >= 80) return "text-[#ff453a]";
+    if (score >= 60) return "text-[#ff9f0a]";
+    if (score >= 30) return "text-[#ffd60a]";
+    return "text-[#30d158]";
   };
 
   const getScoreBarColor = (score: number) => {
-    if (score >= 80) return "bg-[#ef4444]";
-    if (score >= 60) return "bg-[#f97316]";
-    if (score >= 30) return "bg-[#f59e0b]";
-    return "bg-[#10b981]";
+    if (score >= 80) return "bg-[#ff453a]";
+    if (score >= 60) return "bg-[#ff9f0a]";
+    if (score >= 30) return "bg-[#ffd60a]";
+    return "bg-[#30d158]";
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto px-6 py-8 md:px-8 space-y-8">
       {/* Header */}
       <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded bg-[#121824] border border-[#1e293b]">
-            <Radio className="w-5 h-5 text-[#38bdf8]" />
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-[#ff9f0a]/15 border border-[#ff9f0a]/25 text-[#ff9f0a]">
+            <Radio className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold font-mono text-[#f8fafc] tracking-tight">
-              Indicator of Compromise (IOC) Threat Intelligence
+            <h1 className="text-2xl font-bold tracking-tight text-white font-sans">
+              Threat Intelligence Console
             </h1>
-            <p className="text-xs text-[#94a3b8] font-mono leading-relaxed mt-0.5">
-              Deterministic multi-vector forensic evaluation of URLs, domains, and IP addresses. Operates fully on-premises with optional cloud feed integration.
+            <p className="text-xs text-white/50 leading-relaxed mt-0.5">
+              Deterministic multi-vector forensic evaluation of URLs, domains, and IP addresses with zero-trust local reputation synthesis.
             </p>
           </div>
         </div>
       </div>
 
       {/* Interactive IOC Reputation Lookup Tool */}
-      <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-6 space-y-5 shadow-sm">
+      <div className="apple-card p-6 md:p-8 space-y-6">
         <div>
-          <h2 className="text-sm font-bold font-mono text-[#f8fafc] tracking-wide flex items-center gap-2">
-            <Search className="w-4 h-4 text-[#38bdf8]" />
-            <span>Interactive IOC Reputation Analyzer</span>
+          <h2 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+            <Search className="w-4 h-4 text-[#0a84ff]" />
+            <span>Interactive Indicator of Compromise Analyzer</span>
           </h2>
-          <p className="text-xs text-[#94a3b8] font-mono mt-0.5">
+          <p className="text-xs text-white/50 mt-0.5">
             Query lexical heuristics, brand typosquatting, IDN homoglyphs, dynamic DNS records, and configured threat feeds.
           </p>
         </div>
@@ -267,11 +228,11 @@ export const ThreatIntelligence: React.FC = () => {
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value as any)}
-            className="px-3.5 py-2.5 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#cbd5e1] focus:outline-none focus:border-[#38bdf8] transition-colors"
+            className="px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-xs font-mono text-white focus:outline-none focus:border-[#0a84ff] focus:ring-4 focus:ring-[#0a84ff]/15 transition-all"
           >
-            <option value="url">URL</option>
-            <option value="domain">Domain</option>
-            <option value="ip">IP Address</option>
+            <option value="url" className="bg-[#1c1c1e] text-white">URL</option>
+            <option value="domain" className="bg-[#1c1c1e] text-white">Domain</option>
+            <option value="ip" className="bg-[#1c1c1e] text-white">IP Address</option>
           </select>
 
           <div className="relative flex-1">
@@ -286,13 +247,13 @@ export const ThreatIntelligence: React.FC = () => {
                   ? "Enter Domain (e.g. paypal-verify.com or account-update.top)..."
                   : "Enter IPv4/IPv6 address (e.g. 198.51.100.25)..."
               }
-              className="w-full px-3.5 py-2.5 bg-[#0b0f17] border border-[#1e293b] rounded text-xs font-mono text-[#cbd5e1] placeholder-[#64748b] focus:outline-none focus:border-[#38bdf8] transition-colors pr-8"
+              className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-xs font-mono text-white placeholder-white/30 focus:outline-none focus:border-[#0a84ff] focus:ring-4 focus:ring-[#0a84ff]/15 transition-all pr-8"
             />
             {searchValue && (
               <button
                 type="button"
                 onClick={() => setSearchValue("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-mono text-[#64748b] hover:text-[#cbd5e1]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-white/40 hover:text-white"
                 title="Clear"
               >
                 ✕
@@ -303,26 +264,26 @@ export const ThreatIntelligence: React.FC = () => {
           <button
             type="submit"
             disabled={lookupLoading || !searchValue.trim()}
-            className="px-5 py-2.5 rounded bg-[#1e293b] hover:bg-[#2e3e57] border border-[#38bdf8]/40 hover:border-[#38bdf8] text-xs font-mono font-semibold text-[#f8fafc] flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-sm"
+            className="apple-btn-primary px-6 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-md"
           >
             {lookupLoading ? (
               <>
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#38bdf8]" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
                 <span>Analyzing IOC...</span>
               </>
             ) : (
               <>
-                <Search className="w-3.5 h-3.5 text-[#38bdf8]" />
-                <span>Investigate IOC</span>
+                <Search className="w-3.5 h-3.5" />
+                <span>Investigate Indicator</span>
               </>
             )}
           </button>
         </form>
 
-        {/* Quick-test Presets */}
-        <div className="space-y-2 pt-1 border-t border-[#1e293b]/70">
-          <div className="text-[11px] font-mono uppercase tracking-wider text-[#64748b] flex items-center gap-1.5">
-            <Terminal className="w-3 h-3 text-[#38bdf8]" />
+        {/* Quick-test Presets (Apple Pills) */}
+        <div className="space-y-2.5 pt-2 border-t border-white/[0.06]">
+          <div className="text-[11px] uppercase tracking-wider text-white/40 flex items-center gap-1.5 font-medium">
+            <Terminal className="w-3 h-3 text-[#0a84ff]" />
             <span>Sample Test Indicators (Click to Run):</span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -331,13 +292,13 @@ export const ThreatIntelligence: React.FC = () => {
                 key={idx}
                 type="button"
                 onClick={() => handleSelectPreset(p)}
-                className="group flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b0f17] hover:bg-[#162032] border border-[#1e293b] hover:border-[#38bdf8]/50 text-[11px] font-mono text-[#94a3b8] hover:text-[#f8fafc] transition-all cursor-pointer"
+                className="group flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.08] text-xs font-mono text-white/70 hover:text-white transition-all cursor-pointer"
               >
-                <span className="px-1 py-0.2 text-[9px] rounded bg-[#1e293b] text-[#38bdf8] group-hover:bg-[#38bdf8]/20">
+                <span className="px-1.5 py-0.5 text-[9px] rounded-full bg-[#0a84ff]/15 text-[#0a84ff] font-semibold">
                   {p.type.toUpperCase()}
                 </span>
-                <span className="font-semibold text-[#cbd5e1]">{p.label}</span>
-                <span className="text-[10px] text-[#64748b]">({p.tag})</span>
+                <span className="font-medium text-white">{p.label}</span>
+                <span className="text-[10px] text-white/40">({p.tag})</span>
               </button>
             ))}
           </div>
@@ -345,17 +306,17 @@ export const ThreatIntelligence: React.FC = () => {
 
         {/* Recent Search History */}
         {recentSearches.length > 0 && (
-          <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]/50 text-xs font-mono">
-            <div className="flex items-center gap-2 text-[#64748b] overflow-x-auto py-1">
-              <History className="w-3 h-3 text-[#64748b] shrink-0" />
-              <span className="text-[10px] uppercase text-[#64748b] shrink-0">Recent:</span>
+          <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] text-xs font-mono">
+            <div className="flex items-center gap-2 text-white/50 overflow-x-auto py-1">
+              <History className="w-3 h-3 text-white/40 shrink-0" />
+              <span className="text-[10px] uppercase text-white/40 shrink-0">Recent:</span>
               <div className="flex items-center gap-1.5 flex-nowrap">
                 {recentSearches.map((item, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleSelectPreset(item)}
-                    className="px-2 py-0.5 rounded bg-[#0b0f17] hover:bg-[#1a2333] border border-[#1e293b] text-[10px] text-[#cbd5e1] hover:text-[#38bdf8] whitespace-nowrap transition-colors"
+                    className="px-2.5 py-0.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[10px] text-white/70 hover:text-[#0a84ff] whitespace-nowrap transition-colors"
                   >
                     {item.value}
                   </button>
@@ -365,7 +326,7 @@ export const ThreatIntelligence: React.FC = () => {
             <button
               type="button"
               onClick={clearHistory}
-              className="text-[10px] text-[#64748b] hover:text-[#ef4444] flex items-center gap-1 shrink-0 ml-2"
+              className="text-[10px] text-white/40 hover:text-[#ff453a] flex items-center gap-1 shrink-0 ml-2"
               title="Clear search history"
             >
               <Trash2 className="w-2.5 h-2.5" />
@@ -376,7 +337,7 @@ export const ThreatIntelligence: React.FC = () => {
 
         {/* Error Alert */}
         {lookupError && (
-          <div className="p-4 rounded-lg bg-[#ef4444]/10 border border-[#ef4444]/30 text-xs font-mono text-[#ef4444] flex items-center gap-2">
+          <div className="p-4 rounded-2xl bg-[#ff453a]/10 border border-[#ff453a]/30 text-xs text-[#ff453a] flex items-center gap-2.5 backdrop-blur-md">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{lookupError}</span>
           </div>
@@ -387,27 +348,27 @@ export const ThreatIntelligence: React.FC = () => {
       {lookupResult && analysis && (
         <div className="space-y-6">
           {/* Executive Assessment Banner */}
-          <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-6 space-y-5 shadow-md">
+          <div className="apple-card p-6 md:p-8 space-y-6">
             {/* Top Bar: IOC details + Verdict + Copy */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 border-b border-[#1e293b]">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 border-b border-white/[0.08]">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#0b0f17] border border-[#1e293b] text-[#38bdf8] font-bold">
-                    {lookupResult.type.toUpperCase()} INDICATOR
+                  <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-[#0a84ff]/10 border border-[#0a84ff]/25 text-[#0a84ff] font-semibold">
+                    {lookupResult.type.toUpperCase()} Indicator
                   </span>
                   <SeverityBadge severity={analysis.severity} size="md" />
                 </div>
                 <div className="flex items-center gap-2 pt-1">
-                  <span className="text-base sm:text-lg font-bold font-mono text-[#f8fafc] break-all">
+                  <span className="text-base sm:text-lg font-bold font-mono text-white break-all">
                     {lookupResult.ioc}
                   </span>
                   <button
                     onClick={() => copyToClipboard(lookupResult.ioc)}
-                    className="p-1 rounded hover:bg-[#1e293b] text-[#64748b] hover:text-[#f8fafc] transition-colors"
+                    className="p-1.5 rounded-full hover:bg-white/[0.1] text-white/40 hover:text-white transition-colors"
                     title="Copy IOC to clipboard"
                   >
                     {copied ? (
-                      <Check className="w-3.5 h-3.5 text-[#10b981]" />
+                      <Check className="w-3.5 h-3.5 text-[#30d158]" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
@@ -416,11 +377,11 @@ export const ThreatIntelligence: React.FC = () => {
               </div>
 
               {/* Threat Score & Verdict Metrics */}
-              <div className="flex items-center gap-6 bg-[#0b0f17] border border-[#1e293b] px-5 py-3 rounded-lg self-start lg:self-auto">
+              <div className="flex items-center gap-6 bg-white/[0.03] border border-white/[0.08] px-6 py-3.5 rounded-2xl self-start lg:self-auto backdrop-blur-md">
                 <div className="space-y-0.5 text-center">
-                  <div className="text-[10px] font-mono uppercase text-[#64748b]">VERDICT</div>
+                  <div className="text-[10px] font-semibold uppercase text-white/40">VERDICT</div>
                   <div
-                    className={`text-sm font-mono font-black tracking-wider ${getScoreColor(
+                    className={`text-sm font-bold tracking-tight ${getScoreColor(
                       analysis.risk_score
                     )}`}
                   >
@@ -428,22 +389,22 @@ export const ThreatIntelligence: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="h-8 w-[1px] bg-[#1e293b]" />
+                <div className="h-8 w-[1px] bg-white/[0.08]" />
 
                 <div className="space-y-0.5 text-center">
-                  <div className="text-[10px] font-mono uppercase text-[#64748b]">RISK SCORE</div>
+                  <div className="text-[10px] font-semibold uppercase text-white/40">RISK SCORE</div>
                   <div
-                    className={`text-sm font-mono font-black ${getScoreColor(analysis.risk_score)}`}
+                    className={`text-sm font-bold font-mono ${getScoreColor(analysis.risk_score)}`}
                   >
-                    {analysis.risk_score} <span className="text-[10px] text-[#64748b]">/ 100</span>
+                    {analysis.risk_score} <span className="text-[10px] text-white/40 font-normal">/ 100</span>
                   </div>
                 </div>
 
-                <div className="h-8 w-[1px] bg-[#1e293b]" />
+                <div className="h-8 w-[1px] bg-white/[0.08]" />
 
                 <div className="space-y-0.5 text-center">
-                  <div className="text-[10px] font-mono uppercase text-[#64748b]">CONFIDENCE</div>
-                  <div className="text-sm font-mono font-bold text-[#f8fafc]">
+                  <div className="text-[10px] font-semibold uppercase text-white/40">CONFIDENCE</div>
+                  <div className="text-sm font-bold font-mono text-white">
                     {Math.round((analysis.confidence || 0.9) * 100)}%
                   </div>
                 </div>
@@ -452,9 +413,9 @@ export const ThreatIntelligence: React.FC = () => {
 
             {/* Score Progress Bar */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="text-[#94a3b8]">Threat Risk Scale</span>
-                <span className={`font-bold font-mono ${getScoreColor(analysis.risk_score)}`}>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-white/50">Threat Risk Scale</span>
+                <span className={`font-semibold font-mono ${getScoreColor(analysis.risk_score)}`}>
                   {analysis.risk_score >= 80
                     ? "CRITICAL DANGER"
                     : analysis.risk_score >= 60
@@ -464,7 +425,7 @@ export const ThreatIntelligence: React.FC = () => {
                     : "BENIGN / LOW RISK"}
                 </span>
               </div>
-              <div className="w-full h-2 bg-[#0b0f17] rounded-full overflow-hidden border border-[#1e293b]">
+              <div className="w-full h-2 bg-white/[0.08] rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all duration-500 rounded-full ${getScoreBarColor(
                     analysis.risk_score
@@ -475,12 +436,12 @@ export const ThreatIntelligence: React.FC = () => {
             </div>
 
             {/* Executive Synthesis Summary */}
-            <div className="p-4 rounded-lg bg-[#0b0f17] border border-[#1e293b] space-y-1.5">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-[#38bdf8] flex items-center gap-1.5 font-bold">
+            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+              <div className="text-[11px] uppercase tracking-wider text-[#0a84ff] flex items-center gap-1.5 font-semibold">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>Executive Threat Intelligence Synthesis</span>
               </div>
-              <p className="text-xs font-mono text-[#cbd5e1] leading-relaxed">
+              <p className="text-xs text-white/80 leading-relaxed font-normal">
                 {analysis.summary}
               </p>
             </div>
@@ -492,23 +453,23 @@ export const ThreatIntelligence: React.FC = () => {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-[#ef4444]" />
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#cbd5e1]">
+                  <ShieldAlert className="w-4 h-4 text-[#ff453a]" />
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
                     Identified Security Findings ({analysis.indicators?.length || 0})
                   </h3>
                 </div>
-                <span className="text-[11px] font-mono text-[#64748b]">
+                <span className="text-[11px] text-white/40">
                   Mail Sentinel Local Engine
                 </span>
               </div>
 
               {!analysis.indicators || analysis.indicators.length === 0 ? (
-                <div className="p-6 rounded-lg bg-[#121824] border border-[#1e293b] text-center space-y-2">
-                  <CheckCircle2 className="w-8 h-8 text-[#10b981] mx-auto" />
-                  <div className="text-xs font-mono font-bold text-[#f8fafc]">
+                <div className="p-8 rounded-3xl apple-card text-center space-y-2">
+                  <CheckCircle2 className="w-8 h-8 text-[#30d158] mx-auto" />
+                  <div className="text-xs font-semibold text-white">
                     No Active Malicious Indicators Detected
                   </div>
-                  <p className="text-[11px] font-mono text-[#94a3b8] max-w-md mx-auto">
+                  <p className="text-[11px] text-white/50 max-w-md mx-auto">
                     The indicator did not trigger any brand typosquatting, IDN homoglyphs, high-risk TLDs, dynamic DNS hosts, or raw IP transport flags.
                   </p>
                 </div>
@@ -517,32 +478,32 @@ export const ThreatIntelligence: React.FC = () => {
                   {analysis.indicators.map((ind, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#121824] border border-[#1e293b] rounded-lg p-4 space-y-2.5 transition-all hover:border-[#334155]"
+                      className="apple-card p-5 space-y-2.5 transition-all hover:scale-[1.008]"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-0.5">
+                        <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#0b0f17] border border-[#1e293b] text-[#94a3b8]">
+                            <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60">
                               {ind.category}
                             </span>
                             <SeverityBadge severity={ind.severity} size="sm" />
                           </div>
-                          <h4 className="text-xs font-mono font-bold text-[#f8fafc] pt-1">
+                          <h4 className="text-xs font-semibold text-white pt-1">
                             {ind.title}
                           </h4>
                         </div>
                       </div>
 
-                      <p className="text-xs font-mono text-[#94a3b8] leading-relaxed">
+                      <p className="text-xs text-white/65 leading-relaxed font-normal">
                         {ind.description}
                       </p>
 
                       {ind.evidence && (
                         <div className="pt-2">
-                          <div className="text-[10px] font-mono text-[#64748b] uppercase mb-1">
+                          <div className="text-[10px] text-white/40 uppercase mb-1 font-mono">
                             Forensic Evidence:
                           </div>
-                          <div className="px-3 py-1.5 rounded bg-[#0b0f17] border border-[#1e293b] text-[11px] font-mono text-[#38bdf8] break-all">
+                          <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/[0.08] text-[11px] font-mono text-[#64d2ff] break-all">
                             {ind.evidence}
                           </div>
                         </div>
@@ -554,10 +515,10 @@ export const ThreatIntelligence: React.FC = () => {
 
               {/* Actionable Recommendations */}
               {analysis.recommendations && analysis.recommendations.length > 0 && (
-                <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-5 space-y-3 mt-4">
+                <div className="apple-card p-6 space-y-3 mt-4">
                   <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-[#10b981]" />
-                    <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#cbd5e1]">
+                    <Shield className="w-4 h-4 text-[#30d158]" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
                       SOC Containment & Mitigation Recommendations
                     </h3>
                   </div>
@@ -565,9 +526,9 @@ export const ThreatIntelligence: React.FC = () => {
                     {analysis.recommendations.map((rec, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-2.5 text-xs font-mono text-[#cbd5e1] leading-relaxed"
+                        className="flex items-start gap-2.5 text-xs text-white/80 leading-relaxed font-normal"
                       >
-                        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-[#30d158] shrink-0 mt-0.5" />
                         <span>{rec}</span>
                       </li>
                     ))}
@@ -579,15 +540,15 @@ export const ThreatIntelligence: React.FC = () => {
             {/* Right 1 Col: Forensic Technical Telemetry */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-[#38bdf8]" />
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#cbd5e1]">
+                <Cpu className="w-4 h-4 text-[#0a84ff]" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
                   Technical Telemetry
                 </h3>
               </div>
 
-              <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-5 space-y-4 text-xs font-mono">
+              <div className="apple-card p-5 space-y-4 text-xs font-mono">
                 {analysis.telemetry && (
-                  <div className="space-y-3 divide-y divide-[#1e293b]">
+                  <div className="space-y-3 divide-y divide-white/[0.06]">
                     {Object.entries(analysis.telemetry).map(([key, val]) => {
                       let displayVal = String(val);
                       if (Array.isArray(val)) {
@@ -600,10 +561,10 @@ export const ThreatIntelligence: React.FC = () => {
 
                       return (
                         <div key={key} className="pt-2 first:pt-0 space-y-0.5">
-                          <div className="text-[10px] text-[#64748b] uppercase tracking-wider">
+                          <div className="text-[10px] text-white/40 uppercase tracking-wider">
                             {key.replace(/_/g, " ")}
                           </div>
-                          <div className="text-[#cbd5e1] font-semibold break-all">
+                          <div className="text-white/90 font-medium break-all">
                             {displayVal}
                           </div>
                         </div>
@@ -614,15 +575,15 @@ export const ThreatIntelligence: React.FC = () => {
               </div>
 
               {/* Feed Multi-Adapter Status Table */}
-              <div className="bg-[#121824] border border-[#1e293b] rounded-lg p-5 space-y-3">
+              <div className="apple-card p-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Server className="w-3.5 h-3.5 text-[#94a3b8]" />
-                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#cbd5e1]">
+                    <Server className="w-3.5 h-3.5 text-white/40" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white">
                       Intelligence Feeds
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#64748b]">
+                  <span className="text-[10px] font-mono text-white/40">
                     {Object.keys(lookupResult.results || {}).length} Providers
                   </span>
                 </div>
@@ -633,19 +594,19 @@ export const ThreatIntelligence: React.FC = () => {
                     return (
                       <div
                         key={prov}
-                        className="p-2.5 bg-[#0b0f17] border border-[#1e293b] rounded flex items-center justify-between text-xs font-mono"
+                        className="p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl flex items-center justify-between text-xs"
                       >
                         <div className="space-y-0.5">
-                          <div className="font-semibold text-[#f8fafc] text-[11px]">{prov}</div>
-                          <div className="text-[10px] text-[#64748b]">
+                          <div className="font-semibold text-white text-[11px] font-mono">{prov}</div>
+                          <div className="text-[10px] text-white/40">
                             {data?.status || (isConfigured ? "Active" : "Not Configured")}
                           </div>
                         </div>
                         <span
-                          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase ${
+                          className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border uppercase ${
                             isConfigured
-                              ? "bg-[#10b981]/15 text-[#10b981] border-[#10b981]/30"
-                              : "bg-[#1e293b] text-[#94a3b8] border-[#334155]"
+                              ? "bg-[#30d158]/15 text-[#30d158] border-[#30d158]/30"
+                              : "bg-white/[0.06] text-white/50 border-white/[0.08]"
                           }`}
                         >
                           {isConfigured ? "ONLINE" : "OPTIONAL"}
@@ -661,15 +622,15 @@ export const ThreatIntelligence: React.FC = () => {
       )}
 
       {/* Provider Status Cards (Always Visible) */}
-      <div className="space-y-3 pt-4 border-t border-[#1e293b]">
+      <div className="space-y-4 pt-4 border-t border-white/[0.08]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-[#94a3b8]" />
-            <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-[#cbd5e1]">
+            <Radio className="w-4 h-4 text-white/50" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
               Configured Intelligence Feed Adapters
             </h2>
           </div>
-          <span className="text-[11px] font-mono text-[#64748b]">
+          <span className="text-[11px] text-white/40">
             Zero External API Keys Required for Operation
           </span>
         </div>
@@ -683,26 +644,26 @@ export const ThreatIntelligence: React.FC = () => {
               return (
                 <div
                   key={p.name}
-                  className="bg-[#121824] border border-[#1e293b] rounded-lg p-4 flex flex-col justify-between space-y-3"
+                  className="apple-card p-4 flex flex-col justify-between space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold font-mono text-[#f8fafc] truncate" title={p.name}>
+                    <span className="text-xs font-semibold text-white truncate font-mono" title={p.name}>
                       {p.name}
                     </span>
                     <div
                       className={`w-2 h-2 rounded-full shrink-0 ${
-                        isConfigured ? "bg-[#10b981]" : "bg-[#64748b]"
+                        isConfigured ? "bg-[#30d158] shadow-[0_0_6px_#30d158]" : "bg-white/20"
                       }`}
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <div className="text-[10px] font-mono text-[#64748b]">Status</div>
+                    <div className="text-[10px] text-white/40 font-mono">Status</div>
                     <div
-                      className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded border truncate ${
+                      className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border truncate ${
                         isConfigured
-                          ? "bg-[#10b981]/15 text-[#10b981] border-[#10b981]/30"
-                          : "bg-[#0b0f17] text-[#94a3b8] border-[#1e293b]"
+                          ? "bg-[#30d158]/15 text-[#30d158] border-[#30d158]/30"
+                          : "bg-white/[0.04] text-white/50 border-white/[0.08]"
                       }`}
                       title={p.status}
                     >
@@ -710,7 +671,7 @@ export const ThreatIntelligence: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-[#1e293b] text-[9px] font-mono text-[#64748b] leading-snug">
+                  <div className="pt-2 border-t border-white/[0.06] text-[9px] text-white/40 leading-snug">
                     {isConfigured
                       ? "Active for live IOC reputation lookups"
                       : "Optional integration; Mail Sentinel works autonomously without external keys"}
@@ -723,13 +684,13 @@ export const ThreatIntelligence: React.FC = () => {
       </div>
 
       {/* Security Architecture Notice */}
-      <div className="p-5 bg-[#0b0f17] border border-[#1e293b] rounded-lg space-y-2 text-xs font-mono text-[#94a3b8]">
-        <div className="flex items-center gap-2 text-[#f8fafc] font-semibold">
-          <KeyRound className="w-4 h-4 text-[#f59e0b]" />
+      <div className="p-5 apple-card space-y-2 text-xs text-white/60">
+        <div className="flex items-center gap-2 text-white font-semibold">
+          <KeyRound className="w-4 h-4 text-[#ffd60a]" />
           <span>Threat Intelligence Architecture Guidelines</span>
         </div>
-        <p className="leading-relaxed text-[#64748b]">
-          To activate external cloud threat feeds (e.g. VirusTotal, URLhaus, PhishTank, AbuseIPDB), add your API keys to the backend <code className="text-[#cbd5e1]">.env</code> file (e.g. <code className="text-[#cbd5e1]">VIRUSTOTAL_API_KEY=...</code>). All external credentials remain secure on the backend server and are never exposed to the browser client. When external keys are absent, Mail Sentinel's on-premises deterministic intelligence engine evaluates all indicators locally with zero external network dependencies.
+        <p className="leading-relaxed text-white/50 font-normal">
+          To activate external cloud threat feeds (e.g. VirusTotal, URLhaus, PhishTank, AbuseIPDB), add your API keys to the backend <code className="text-white/80 font-mono bg-white/[0.06] px-1.5 py-0.5 rounded">.env</code> file (e.g. <code className="text-white/80 font-mono bg-white/[0.06] px-1.5 py-0.5 rounded">VIRUSTOTAL_API_KEY=...</code>). All external credentials remain secure on the backend server and are never exposed to the browser client. When external keys are absent, Mail Sentinel's on-premises deterministic intelligence engine evaluates all indicators locally with zero external network dependencies.
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
+import { HowToUseModal } from './components/HowToUseModal';
 import { Dashboard } from './pages/Dashboard';
 import { Scanner } from './pages/Scanner';
 import { Results } from './pages/Results';
@@ -14,7 +15,16 @@ import { ScanService } from './services/api';
 
 const MainLayout: React.FC = () => {
   const [engineOnline, setEngineOnline] = useState(true);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    // Show 'How to Use' guide automatically on first platform visit
+    const hasSeenGuide = localStorage.getItem('mail_sentinel_guide_seen');
+    if (!hasSeenGuide) {
+      setIsGuideOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -97,17 +107,30 @@ const MainLayout: React.FC = () => {
   const { title, subtitle } = getPageTitle(location.pathname);
 
   return (
-    <div className="flex min-h-screen bg-[#0b0f17] text-slate-100 antialiased font-sans selection:bg-slate-700 selection:text-white">
-      {/* Persistent SOC Left Sidebar */}
-      <Sidebar engineOnline={engineOnline} />
+    <div className="flex h-screen w-screen bg-black text-white antialiased font-sans selection:bg-[#0071e3] selection:text-white relative overflow-hidden">
+      {/* Apple Ambient Dynamic Glow Backing */}
+      <div className="apple-ambient-bg" aria-hidden="true">
+        <div className="apple-ambient-orb-1" />
+        <div className="apple-ambient-orb-2" />
+      </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+      {/* Persistent SOC Left Sidebar (macOS style frosted panel, strictly locked) */}
+      <Sidebar
+        engineOnline={engineOnline}
+        onOpenGuide={() => setIsGuideOpen(true)}
+      />
+
+      {/* Main Content Area (locked height, only <main> scrolls) */}
+      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden relative z-10">
         {/* Top Navbar */}
-        <Navbar title={title} subtitle={subtitle} />
+        <Navbar
+          title={title}
+          subtitle={subtitle}
+          onOpenGuide={() => setIsGuideOpen(true)}
+        />
 
-        {/* Scrollable Page Body */}
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto">
+        {/* Scrollable Page Body (clean, no duplicate padding, only this element scrolls) */}
+        <main className="flex-1 min-w-0 w-full overflow-y-auto overscroll-contain">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/scan" element={<Scanner />} />
@@ -121,6 +144,12 @@ const MainLayout: React.FC = () => {
           </Routes>
         </main>
       </div>
+
+      {/* Interactive Platform Guide & Onboarding Tour Modal */}
+      <HowToUseModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+      />
     </div>
   );
 };

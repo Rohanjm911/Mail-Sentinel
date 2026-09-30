@@ -7,6 +7,7 @@ export interface Finding {
   title: string;
   description: string;
   evidence?: string;
+  score_delta?: number;
 }
 
 export interface URLItem {
@@ -164,6 +165,7 @@ export interface EngineTelemetryPoint {
   engine: string;
   score: number;
   weight: number;
+  status?: string;
 }
 
 export interface DashboardStatistics {

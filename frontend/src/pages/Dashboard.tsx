@@ -77,7 +77,6 @@ export const Dashboard: React.FC = () => {
     }
     load();
 
-    // Live background polling every 6 seconds so charts update after each test scan
     const interval = setInterval(async () => {
       try {
         const data = await ScanService.getStatistics();
@@ -86,7 +85,7 @@ export const Dashboard: React.FC = () => {
           setLastUpdated(new Date());
         }
       } catch {
-        // Maintain active stats in background
+        // Keep stats active
       }
     }, 6000);
 
@@ -96,17 +95,17 @@ export const Dashboard: React.FC = () => {
     };
   }, []);
 
-  // Anime.js staggered entrance animation
+  // Anime.js entrance animation
   useEffect(() => {
     if (!loading && stats && dashboardRef.current) {
       const items = dashboardRef.current.querySelectorAll(".anime-entry");
       if (items.length > 0) {
         animate(items, {
-          translateY: [14, 0],
+          translateY: [12, 0],
           opacity: [0, 1],
-          delay: stagger(65),
+          delay: stagger(60),
           ease: "outQuad",
-          duration: 450,
+          duration: 400,
         });
       }
     }
@@ -114,7 +113,7 @@ export const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-8 max-w-7xl mx-auto">
         <LoadingState message="Connecting to SOC Security Telemetry..." submessage="Initializing local PostgreSQL / SQLite datastore..." />
       </div>
     );
@@ -122,7 +121,7 @@ export const Dashboard: React.FC = () => {
 
   if (error || !stats) {
     return (
-      <div className="p-8">
+      <div className="p-8 max-w-7xl mx-auto">
         <ErrorState
           title="Telemetry Data Unavailable"
           message={error || "Could not retrieve system dashboard metrics."}
@@ -132,7 +131,6 @@ export const Dashboard: React.FC = () => {
     );
   }
 
-  // Format recent scans for table
   const formattedRecentScans: ScanSummary[] = (stats.recent_scans || []).map((s: any) => ({
     id: s.id,
     created_at: typeof s.created_at === "string" ? s.created_at : new Date(s.created_at).toISOString(),
@@ -148,109 +146,115 @@ export const Dashboard: React.FC = () => {
   }));
 
   return (
-    <div ref={dashboardRef} className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Hero SOC Posture Banner */}
-      <div className="anime-entry relative overflow-hidden rounded-2xl bg-[#0d1424] border border-sky-500/30 p-6 shadow-md shadow-black/30">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-              </span>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-400 font-bold">
-                SOC DEFENSE POSTURE: GUARD ACTIVE
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/50">
-                LIVE TELEMETRY SYNC
-              </span>
+    <div ref={dashboardRef} className="max-w-7xl mx-auto px-6 py-8 md:px-8 space-y-8">
+      {/* Apple Hero SOC Posture Banner */}
+      <div className="anime-entry apple-card relative overflow-hidden p-6 md:p-8">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex items-start sm:items-center gap-5">
+            <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-3xl bg-white/[0.05] border border-white/[0.12] flex items-center justify-center p-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] shrink-0 group">
+              <img
+                src="/logo.png"
+                alt="Mail Sentinel Insignia"
+                className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(10,132,255,0.4)] transition-transform duration-300 group-hover:scale-105"
+              />
             </div>
-            <h2 className="text-xl md:text-2xl font-extrabold text-slate-100 tracking-tight">
-              Enterprise Email Phishing Defense Console
-            </h2>
-            <p className="text-xs text-slate-400 max-w-2xl font-sans">
-              Real-time multi-engine heuristic telemetry, explainable TF-IDF classification, and zero-day threat correlation.
-            </p>
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#30d158]/10 border border-[#30d158]/25 text-[11px] font-semibold text-[#30d158]">
+                  <span className="radar-live-dot w-2 h-2 rounded-full bg-[#30d158]" />
+                  <span>Defense Guard Active</span>
+                </span>
+                <span className="text-[11px] text-white/50 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08]">
+                  Live Local Telemetry
+                </span>
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white font-sans">
+                Enterprise Email Phishing Defense
+              </h2>
+              <p className="text-xs text-white/60 max-w-2xl font-normal leading-relaxed">
+                Deterministic heuristic detection, local explainable TF-IDF classification, and zero-trust credential harvesting protection.
+              </p>
+            </div>
           </div>
 
-          {/* Quick Action & Sync Buttons */}
+          {/* Apple Action Pills */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={handleManualSync}
               disabled={isRefreshing}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#111a2d] hover:bg-[#16223b] text-slate-300 hover:text-sky-300 text-xs font-mono border border-slate-700/80 transition-all cursor-pointer"
+              className="apple-btn-secondary px-4 py-2 text-xs flex items-center gap-2 cursor-pointer shadow-sm"
               title="Manually sync telemetry"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-sky-400" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-[#0a84ff]" : ""}`} />
               <span>{isRefreshing ? "Syncing..." : "Sync"}</span>
             </button>
             <Link
               to="/scan"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-sm border border-sky-400/30 transition-all"
+              className="apple-btn-primary px-5 py-2 text-xs flex items-center gap-2 font-medium"
             >
               <FileSearch className="w-3.5 h-3.5" />
               <span>Scan Email</span>
             </Link>
             <Link
               to="/threat-intelligence"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#152238] hover:bg-[#1a2b47] text-sky-300 text-xs font-semibold border border-sky-500/30 transition-all"
+              className="apple-btn-secondary px-4 py-2 text-xs flex items-center gap-2"
             >
-              <Radio className="w-3.5 h-3.5 text-sky-400" />
+              <Radio className="w-3.5 h-3.5 text-[#ff9f0a]" />
               <span>Lookup IOC</span>
             </Link>
           </div>
         </div>
 
-        {/* Engine Telemetry Ticker */}
-        <div className="mt-5 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
+        {/* Engine Telemetry Ticker (Apple macOS System Specs style) */}
+        <div className="mt-6 pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-4 md:gap-6">
-            <div className="flex items-center gap-1.5">
-              <Cpu className="w-3.5 h-3.5 text-sky-400" />
-              <span>ML Engine:</span>
-              <span className="text-slate-200 font-semibold">TF-IDF + Logistic Reg</span>
+            <div className="flex items-center gap-2">
+              <Cpu className="w-3.5 h-3.5 text-[#0a84ff]" />
+              <span className="text-white/50">Engine:</span>
+              <span className="text-white font-medium">TF-IDF + Logistic Reg</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Accuracy:</span>
-              <span className="text-emerald-400 font-bold">98.28%</span>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#30d158]" />
+              <span className="text-white/50">Benchmark Accuracy:</span>
+              <span className="text-[#30d158] font-semibold font-mono">98.28%</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-amber-400" />
-              <span>Recall:</span>
-              <span className="text-amber-400 font-bold">100.0%</span>
+            <div className="flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5 text-[#ff9f0a]" />
+              <span className="text-white/50">Recall:</span>
+              <span className="text-[#ff9f0a] font-semibold font-mono">100.0%</span>
             </div>
           </div>
-          <div className="text-[11px] text-slate-400">
-            Last Telemetry Update: <span className="text-slate-300 font-semibold">{lastUpdated.toLocaleTimeString()}</span>
+          <div className="text-[11px] text-white/40">
+            Last Updated: <span className="text-white/70 font-mono font-medium">{lastUpdated.toLocaleTimeString()}</span>
           </div>
         </div>
       </div>
 
       {/* Sample Data Disclaimer Notification */}
       {stats.is_sample_data && (
-        <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs font-mono">
-          <div className="flex items-center gap-2.5 text-amber-300">
-            <Info className="w-4 h-4 shrink-0 text-amber-400" />
+        <div className="p-4 rounded-2xl bg-[#ff9f0a]/10 border border-[#ff9f0a]/25 flex items-center justify-between text-xs backdrop-blur-md">
+          <div className="flex items-center gap-3 text-[#ff9f0a]">
+            <Info className="w-4 h-4 shrink-0" />
             <span>
               <strong>Sample Baseline Telemetry:</strong> No live user scans processed yet. Displaying baseline benchmark metrics. Run your first email scan to record live incidents.
             </span>
           </div>
           <Link
             to="/scan"
-            className="px-3 py-1 rounded-lg bg-[#0a0f1d] border border-amber-500/40 text-amber-300 hover:bg-amber-500/20 transition-all shrink-0 ml-4 font-semibold"
+            className="px-3.5 py-1.5 rounded-full bg-white/[0.1] border border-[#ff9f0a]/40 text-[#ff9f0a] hover:bg-[#ff9f0a]/20 transition-all shrink-0 ml-4 font-semibold text-xs"
           >
             Launch Scanner
           </Link>
         </div>
       )}
 
-      {/* Statistics Cards Grid */}
+      {/* Apple Statistics Cards Grid */}
       <div className="anime-entry grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
           title="Total Scans"
           value={stats.total_scans.toLocaleString()}
-          subtitle="Processed message inspections"
+          subtitle="Processed email inspections"
           icon={Activity}
           badgeText={stats.is_sample_data ? "DEMO" : "LIVE"}
           badgeType="neutral"
@@ -258,7 +262,7 @@ export const Dashboard: React.FC = () => {
         <StatCard
           title="Phishing Detected"
           value={stats.phishing_detected.toLocaleString()}
-          subtitle="High & Critical threat alerts"
+          subtitle="High & Critical alerts"
           icon={ShieldAlert}
           badgeText={`${Math.round((stats.phishing_detected / Math.max(1, stats.total_scans)) * 100)}%`}
           badgeType="danger"
@@ -281,26 +285,26 @@ export const Dashboard: React.FC = () => {
         />
       </div>
 
-      {/* Dynamic Graphs Section: Live Threat Trajectory & Severity Distribution */}
+      {/* Dynamic Graphs Section */}
       <div className="anime-entry grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 Cols): Sequential Scan Score Trajectory */}
-        <div className="lg:col-span-2 cyber-card rounded-2xl p-6 md:p-7 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+        {/* Left Column (2 Cols): Threat Trajectory */}
+        <div className="lg:col-span-2 apple-card p-6 md:p-7 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-sky-400" />
-                <h3 className="text-sm font-bold text-slate-100 font-mono tracking-wide">
-                  REAL-TIME SCAN RISK TRAJECTORY
+                <BarChart3 className="w-4 h-4 text-[#0a84ff]" />
+                <h3 className="text-sm font-semibold text-white tracking-tight">
+                  Real-time Scan Risk Trajectory
                 </h3>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 font-sans">
-                Consecutive threat scores (0–100) mapped per email test scan. Updates dynamically with each test.
+              <p className="text-xs text-white/50 mt-0.5">
+                Consecutive threat scores (0–100) mapped per email test scan.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <span className="flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-md bg-[#080c14] border border-[#1e2d4a] text-emerald-400 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Auto-Updating</span>
+              <span className="flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-[#30d158]/10 border border-[#30d158]/25 text-[#30d158] font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
+                <span>Live Feed</span>
               </span>
             </div>
           </div>
@@ -311,17 +315,17 @@ export const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Right Column (1 Col): Incident Severity Breakdown Donut */}
-        <div className="cyber-card rounded-2xl p-6 md:p-7 flex flex-col justify-between space-y-4">
-          <div className="border-b border-slate-800/80 pb-4">
+        {/* Right Column (1 Col): Severity Breakdown Donut */}
+        <div className="apple-card p-6 md:p-7 flex flex-col justify-between space-y-4">
+          <div className="border-b border-white/[0.08] pb-4">
             <div className="flex items-center gap-2">
-              <PieIcon className="w-4 h-4 text-sky-400" />
-              <h3 className="text-sm font-bold text-slate-100 font-mono tracking-wide">
-                SEVERITY BREAKDOWN
+              <PieIcon className="w-4 h-4 text-[#bf5af2]" />
+              <h3 className="text-sm font-semibold text-white tracking-tight">
+                Severity Breakdown
               </h3>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 font-sans">
-              Proportional distribution of classified incident severities.
+            <p className="text-xs text-white/50 mt-0.5">
+              Proportional incident distribution.
             </p>
           </div>
 
@@ -336,20 +340,20 @@ export const Dashboard: React.FC = () => {
 
       {/* Multi-Vector Engine Threat Telemetry */}
       {stats.engine_telemetry && stats.engine_telemetry.length > 0 && (
-        <div className="anime-entry cyber-card rounded-2xl p-6 md:p-7 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div className="anime-entry apple-card p-6 md:p-7 space-y-5">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-sky-400" />
-                <h3 className="text-sm font-bold text-slate-100 font-mono tracking-wide">
-                  MULTI-ENGINE THREAT TELEMETRY
+                <Layers className="w-4 h-4 text-[#64d2ff]" />
+                <h3 className="text-sm font-semibold text-white tracking-tight">
+                  Multi-Engine Threat Telemetry
                 </h3>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 font-sans">
+              <p className="text-xs text-white/50 mt-0.5">
                 Mean heuristic risk scores calculated across specialized detection vector engines.
               </p>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-[#080c14] border border-[#1e2d4a] text-slate-400 hidden sm:inline-block">
+            <span className="text-[11px] px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60 hidden sm:inline-block font-medium">
               6 Detection Layers
             </span>
           </div>
@@ -359,26 +363,26 @@ export const Dashboard: React.FC = () => {
       )}
 
       {/* Recent Scans Section */}
-      <div className="anime-entry cyber-card rounded-2xl p-6 md:p-7 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+      <div className="anime-entry apple-card p-6 md:p-7 space-y-5">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
           <div>
-            <h3 className="text-sm font-bold text-slate-100 font-mono tracking-wide">
-              RECENT ANALYZED MESSAGES
+            <h3 className="text-sm font-semibold text-white tracking-tight">
+              Recent Analyzed Messages
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5 font-sans">
+            <p className="text-xs text-white/50 mt-0.5">
               Latest analyzed communications, forensic risk scores, and extracted IOC detections.
             </p>
           </div>
           <Link
             to="/history"
-            className="text-xs font-mono font-semibold text-sky-400 hover:text-sky-300 inline-flex items-center gap-1.5 transition-colors p-1.5 rounded-lg hover:bg-sky-500/10"
+            className="text-xs font-medium text-[#0a84ff] hover:text-[#64d2ff] inline-flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-full hover:bg-white/[0.06]"
           >
             <span>View Full Audit Log</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <ScanHistoryTable scans={formattedRecentScans} isCompact={true} />
+        <ScanHistoryTable scans={formattedRecentScans} isCompact />
       </div>
     </div>
   );

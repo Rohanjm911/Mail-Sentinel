@@ -77,6 +77,15 @@ export const ScanService = {
     return res.data;
   },
 
+  async getThreatIntelProviders(): Promise<ThreatIntelProvider[]> {
+    try {
+      const res = await api.get<{ providers: ThreatIntelProvider[] }>("/threat-intel/status");
+      return res.data?.providers || [];
+    } catch {
+      return [];
+    }
+  },
+
   async lookupIOC(type: string, value: string): Promise<IOCLookupResponse> {
     const res = await api.post<IOCLookupResponse>("/threat-intel/lookup", { type, value });
     return res.data;

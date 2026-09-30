@@ -18,40 +18,40 @@ export const RiskScore: React.FC<RiskScoreProps> = ({
 }) => {
   const norm = (severity || "LOW").toUpperCase();
 
-  let strokeColor = "#10b981";
-  let textColor = "text-emerald-400";
-  let bgBadge = "bg-emerald-500/10 border-emerald-500/30 text-emerald-300 glow-badge-safe";
-  let severityLabel = "LOW / BENIGN";
+  let strokeColor = "#30d158";
+  let textColor = "text-[#30d158]";
+  let bgBadge = "bg-[#30d158]/15 border-[#30d158]/30 text-[#30d158] glow-badge-safe";
+  let severityLabel = "Low / Benign";
   let recommendation = "Message conforms to standard business patterns. Safe for inbox delivery.";
   let Icon = ShieldCheck;
 
   if (norm === "CRITICAL") {
-    strokeColor = "#ef4444";
-    textColor = "text-red-400";
-    bgBadge = "bg-red-500/15 border-red-500/35 text-red-300 glow-badge-critical";
-    severityLabel = "CRITICAL THREAT";
+    strokeColor = "#ff453a";
+    textColor = "text-[#ff453a]";
+    bgBadge = "bg-[#ff453a]/15 border-[#ff453a]/35 text-[#ff453a] glow-badge-critical";
+    severityLabel = "Critical Threat";
     recommendation = "Active attack vectors detected (credential harvesting / executable payload). Immediate drop & quarantine.";
     Icon = AlertOctagon;
   } else if (norm === "HIGH") {
-    strokeColor = "#f97316";
-    textColor = "text-orange-400";
-    bgBadge = "bg-orange-500/15 border-orange-500/35 text-orange-300";
-    severityLabel = "HIGH RISK";
+    strokeColor = "#ff9f0a";
+    textColor = "text-[#ff9f0a]";
+    bgBadge = "bg-[#ff9f0a]/15 border-[#ff9f0a]/35 text-[#ff9f0a]";
+    severityLabel = "High Risk";
     recommendation = "Strong phishing indicators found (brand spoofing / typosquatting). Quarantine message for review.";
     Icon = ShieldAlert;
   } else if (norm === "MEDIUM") {
-    strokeColor = "#f59e0b";
-    textColor = "text-amber-400";
-    bgBadge = "bg-amber-500/15 border-amber-500/35 text-amber-300";
-    severityLabel = "SUSPICIOUS / MEDIUM";
+    strokeColor = "#ffd60a";
+    textColor = "text-[#ffd60a]";
+    bgBadge = "bg-[#ffd60a]/15 border-[#ffd60a]/35 text-[#ffd60a]";
+    severityLabel = "Suspicious / Medium";
     recommendation = "Anomalies identified (urgency tactics / mismatched Reply-To). Apply warning banner to recipient.";
     Icon = AlertTriangle;
   }
 
   const confidencePct = Math.round(confidence <= 1 ? confidence * 100 : confidence);
 
-  // Circular gauge math (Radius: 52, Circumference: ~326.7)
-  const radius = 52;
+  // Apple Watch Activity Ring Math (Radius: 56, Circumference: ~351.86)
+  const radius = 56;
   const circumference = 2 * Math.PI * radius;
   const safeScore = Math.min(100, Math.max(0, score));
   const strokeDashoffset = circumference - (safeScore / 100) * circumference;
@@ -60,118 +60,110 @@ export const RiskScore: React.FC<RiskScoreProps> = ({
   const circleRef = React.useRef<SVGCircleElement>(null);
 
   React.useEffect(() => {
-    // Animate radial arc stroke
-    if (circleRef.current) {
-      animate(circleRef.current, {
-        strokeDashoffset: [circumference, strokeDashoffset],
-        ease: "outCubic",
-        duration: 1200,
-      });
-    }
+    if (!circleRef.current || !scoreRef.current) return;
 
-    // Animate score number count-up
-    if (scoreRef.current) {
-      const counter = { val: 0 };
-      animate(counter, {
-        val: safeScore,
-        ease: "outExpo",
-        duration: 1100,
-        onUpdate: () => {
-          if (scoreRef.current) {
-            scoreRef.current.textContent = String(Math.round(counter.val));
-          }
-        },
-      });
-    }
-  }, [score, strokeDashoffset, circumference, safeScore]);
+    // Animate circular ring
+    animate(circleRef.current, {
+      strokeDashoffset: [circumference, strokeDashoffset],
+      ease: "outExpo",
+      duration: 1400,
+    });
+
+    // Animate number count
+    const obj = { val: 0 };
+    animate(obj, {
+      val: safeScore,
+      ease: "outExpo",
+      duration: 1200,
+      onUpdate: () => {
+        if (scoreRef.current) {
+          scoreRef.current.textContent = Math.round(obj.val).toString();
+        }
+      },
+    });
+  }, [safeScore, strokeDashoffset, circumference]);
 
   return (
-    <div className="cyber-card rounded-2xl p-6 flex flex-col justify-between h-full border border-slate-800">
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-        <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold flex items-center gap-1.5">
-          <Icon className={`w-3.5 h-3.5 ${textColor}`} />
-          <span>Threat Assessment</span>
+    <div className="apple-card p-6 md:p-7 flex flex-col justify-between space-y-6 h-full">
+      {/* Title & Tag */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+          Deterministic Threat Assessment
         </span>
-        {showConfidence && (
-          <span className="text-xs font-mono text-slate-300 bg-[#0a0f1d] px-2.5 py-0.5 rounded-md border border-[#1e2d4a]">
-            Confidence: <strong className="text-sky-300">{confidencePct}%</strong>
-          </span>
-        )}
+        <span className={`text-[11px] font-bold px-3 py-1 rounded-full border backdrop-blur-md ${bgBadge}`}>
+          {severityLabel}
+        </span>
       </div>
 
-      {/* Radial Gauge Centerpiece */}
-      <div className="my-6 flex items-center justify-around gap-4">
-        {/* SVG Circular Progress Meter */}
-        <div className="relative w-32 h-32 shrink-0 flex items-center justify-center">
-          <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+      {/* Apple Watch Radial Ring Meter */}
+      <div className="flex flex-col items-center justify-center my-2">
+        <div className="relative w-40 h-40 flex items-center justify-center">
+          <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 136 136">
             {/* Background Track */}
             <circle
-              cx="60"
-              cy="60"
+              cx="68"
+              cy="68"
               r={radius}
-              className="stroke-[#131d31]"
-              strokeWidth="10"
-              fill="transparent"
+              stroke="rgba(255, 255, 255, 0.08)"
+              strokeWidth="11"
+              fill="none"
             />
-            {/* Animated Score Progress Arc with Anime.js */}
+            {/* Progress Stroke */}
             <circle
               ref={circleRef}
-              cx="60"
-              cy="60"
+              cx="68"
+              cy="68"
               r={radius}
               stroke={strokeColor}
-              strokeWidth="10"
+              strokeWidth="11"
               strokeDasharray={circumference}
               strokeDashoffset={circumference}
               strokeLinecap="round"
-              fill="transparent"
+              fill="none"
               style={{
-                filter: `drop-shadow(0 0 6px ${strokeColor}66)`,
+                filter: `drop-shadow(0 0 8px ${strokeColor}66)`,
               }}
             />
           </svg>
 
-          {/* Value Inside Circle */}
+          {/* Center Digital Readout */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span ref={scoreRef} className={`text-4xl font-extrabold font-mono tracking-tight ${textColor}`}>
-              {score}
+            <span
+              ref={scoreRef}
+              className={`text-4xl font-extrabold font-mono tracking-tight ${textColor}`}
+            >
+              0
             </span>
-            <span className="text-[10px] font-mono text-slate-400 -mt-1 font-medium">
-              SCORE / 100
+            <span className="text-[10px] uppercase font-semibold text-white/40 tracking-wider mt-0.5">
+              Score / 100
             </span>
-          </div>
-        </div>
-
-        {/* Severity Label & Status */}
-        <div className="flex flex-col space-y-2">
-          <div className={`px-3 py-1 rounded-lg border text-xs font-mono font-bold tracking-wider uppercase inline-flex items-center gap-2 ${bgBadge}`}>
-            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: strokeColor }} />
-            <span>{severityLabel}</span>
-          </div>
-          <div className="text-[11px] font-mono text-slate-400">
-            Arbiter Formula: <span className="text-slate-300 font-semibold">6-Engine Blend</span>
           </div>
         </div>
       </div>
 
-      {/* Linear Segment Scale */}
-      <div className="space-y-1.5 pt-3 border-t border-slate-800/80">
-        <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
-          <span className="text-emerald-400 font-semibold">0 Clean</span>
-          <span className="text-amber-400 font-semibold">30 Suspicious</span>
-          <span className="text-orange-400 font-semibold">60 High</span>
-          <span className="text-red-400 font-semibold">80+ Critical</span>
+      {/* Confidence Bar & Recommendation */}
+      <div className="space-y-4 pt-2 border-t border-white/[0.08]">
+        {showConfidence && (
+          <div className="space-y-1.5">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-white/50 font-medium">Model Certainty:</span>
+              <span className="font-semibold text-white font-mono">{confidencePct}%</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-white/[0.08] overflow-hidden p-0.5">
+              <div
+                className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-[#0a84ff] to-[#64d2ff]"
+                style={{ width: `${confidencePct}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-start gap-3">
+          <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${textColor}`} />
+          <p className="text-xs text-white/70 leading-relaxed font-normal">
+            {recommendation}
+          </p>
         </div>
-        <div className="w-full bg-[#0a0f1d] rounded-full h-2 overflow-hidden border border-[#1e2d4a] flex">
-          <div className="h-full bg-emerald-500/30 w-[30%]" />
-          <div className="h-full bg-amber-500/30 w-[30%]" />
-          <div className="h-full bg-orange-500/30 w-[20%]" />
-          <div className="h-full bg-red-500/30 w-[20%]" />
-        </div>
-        <p className="text-[11px] text-slate-400 mt-2 font-sans line-clamp-2">
-          {recommendation}
-        </p>
       </div>
     </div>
   );
