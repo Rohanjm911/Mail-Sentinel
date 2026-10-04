@@ -150,9 +150,9 @@ export const ThreatIntelligence: React.FC = () => {
     const typeParam = searchParams.get("type");
     if (iocParam) {
       const validT = typeParam === "domain" || typeParam === "ip" ? typeParam : "url";
-      setSearchType(validT);
-      setSearchValue(iocParam);
-      runLookup(validT, iocParam);
+      void Promise.resolve().then(() => {
+        runLookup(validT, iocParam);
+      });
     }
   }, [searchParams, runLookup]);
 

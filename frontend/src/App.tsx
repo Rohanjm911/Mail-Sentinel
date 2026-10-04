@@ -15,16 +15,11 @@ import { ScanService } from './services/api';
 
 const MainLayout: React.FC = () => {
   const [engineOnline, setEngineOnline] = useState(true);
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
+  const [isGuideOpen, setIsGuideOpen] = useState(() => {
     // Show 'How to Use' guide automatically on first platform visit
-    const hasSeenGuide = localStorage.getItem('mail_sentinel_guide_seen');
-    if (!hasSeenGuide) {
-      setIsGuideOpen(true);
-    }
-  }, []);
+    return !localStorage.getItem('mail_sentinel_guide_seen');
+  });
+  const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;

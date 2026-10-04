@@ -18,6 +18,7 @@
   <a href="https://react.dev"><img src="https://img.shields.io/badge/Frontend-React_19_&_Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
   <a href="#-machine-learning-performance"><img src="https://img.shields.io/badge/ML_Accuracy-98.28%25-FF9F0A?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Accuracy" /></a>
+  <a href="#-application-interface--forensic-workstation"><img src="https://img.shields.io/badge/UI_Screenshots-8_Retina_Views-5E5CE6?style=for-the-badge&logo=apple&logoColor=white" alt="Screenshots" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-BF5AF2?style=for-the-badge" alt="License" /></a>
 </p>
 
@@ -41,6 +42,11 @@ Designed with an **Apple-inspired macOS & visionOS frosted dark design language*
 - ⚡ **Sub-Second Multi-Engine Triage**: Ingests raw RFC 5322 headers, body text, or `.eml` files instantly.
 - 🧠 **Explainable Intelligence**: Every risk score points to exact regex matches, header hops, and NLP token weights.
 - ✨ **Apple-Grade Aesthetic**: Obsidian dark mode, fluid glassmorphism, responsive stationary sidebar, and built-in interactive onboarding guide.
+
+<!-- Main SOC Console High-Resolution Hero Preview -->
+<p align="center">
+  <img src="./docs/screenshots/01_soc_dashboard.png" alt="Mail Sentinel SOC Operations Console" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); margin-top: 16px; margin-bottom: 24px;" />
+</p>
 
 ---
 
@@ -105,6 +111,56 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 
 ---
 
+## 📸 Application Interface & Forensic Workstation
+
+Explore high-resolution captures of the Mail Sentinel dark frosted glass interface, engineered to Apple Human Interface Guidelines:
+
+<div align="center">
+
+### 1. Security Operations Command Dashboard (`/`)
+*Real-time incident ingestion telemetry, threat score trajectory, and 6-engine status gauges.*
+
+<img src="./docs/screenshots/01_soc_dashboard.png" alt="Mail Sentinel SOC Operations Dashboard" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 2. Email Security Scanner (`/scan`)
+*Dual-mode ingestion supporting raw RFC 5322 header/body pasting and `.eml` drag-and-drop with pre-configured attack templates.*
+
+<img src="./docs/screenshots/02_security_scanner.png" alt="Mail Sentinel Email Security Scanner" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 3. Forensic Threat Assessment Dossier (`/results/:id`)
+*Detailed explainability report featuring Apple Watch Activity Ring risk scoring (85/100 Critical), regex evidence, and prescriptive SOC remediation playbooks.*
+
+<img src="./docs/screenshots/03_threat_dossier.png" alt="Mail Sentinel Forensic Threat Dossier" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 4. Threat Intelligence Workstation (`/threat-intelligence`)
+*Real-time IOC lookup console with multi-feed OSINT integrations, passive lexical reputation scoring, and search history.*
+
+<img src="./docs/screenshots/04_threat_intelligence.png" alt="Mail Sentinel Threat Intelligence Console" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 5. Scan History & Incident Audit Trail (`/history`)
+*Searchable, chronological forensic audit log with segmented severity filters and quick-action dossier navigators.*
+
+<img src="./docs/screenshots/05_incident_history.png" alt="Mail Sentinel Scan History and Incident Log" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 6. Security Reports & Compliance Analytics (`/reports`)
+*Executive posture analytics, attack vector distribution breakdown, and one-click JSON/CSV compliance exports.*
+
+<img src="./docs/screenshots/06_security_reports.png" alt="Mail Sentinel Security Reports and Analytics" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 7. Platform Configuration & Engine Weights (`/settings`)
+*macOS-inspired settings panel with tunable ML model influence sliders, threshold definitions, and operational privacy switches.*
+
+<img src="./docs/screenshots/07_platform_settings.png" alt="Mail Sentinel Platform Settings" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+### 8. Interactive Startup Onboarding Tour (`HowToUseModal`)
+*Integrated macOS modal dialog welcoming analysts with a 4-step interactive walkthrough, feature directory, and pro SOC tips.*
+
+<img src="./docs/screenshots/08_onboarding_guide.png" alt="Mail Sentinel Interactive Onboarding Tour" width="100%" style="border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6); margin-bottom: 24px;" />
+
+</div>
+
+---
+
 ## 🧩 Platform Features & Capabilities
 
 <details open>
@@ -117,6 +173,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
   - 🎣 *Credential Harvester* (Urgent password expiration lure with obfuscated IP link)
   - 📎 *Malicious Invoice* (Macro attachment signature with fake billing details)
   - 🛡️ *Legitimate Security Bulletin* (Clean, passing SPF/DKIM authentication)
+
+<p align="center">
+  <img src="./docs/screenshots/02_security_scanner.png" alt="Email Security Scanner" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -127,6 +187,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 - **Explainable Findings**: Expandable iOS-style cards detailing exact score contributions (`+25 Risk`), trigger descriptions, and raw evidence.
 - **Evidence Clipboard**: Instant one-click copy button for regex strings, header proof, and forensic logs.
 - **SOC Remediation Playbook**: Prescriptive next steps for incident response teams (e.g. sender blacklisting, session revocation, message purging).
+
+<p align="center">
+  <img src="./docs/screenshots/03_threat_dossier.png" alt="Threat Assessment Dossier" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -137,6 +201,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 - **Severity Donut Breakdown**: Activity Ring color distribution of incident severities.
 - **Score Trajectory & Volume Chart**: Recharts area visualization toggleable between score timeline and incident volume.
 - **Engine Telemetry Cards**: 6 real-time status gauges monitoring detector health and relative weights.
+
+<p align="center">
+  <img src="./docs/screenshots/01_soc_dashboard.png" alt="Security Operations Dashboard" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -146,6 +214,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 - **Interactive IOC Lookup**: Investigate URLs, domain names, and IPv4 addresses.
 - **Multi-Feed Providers**: Status indicators for VirusTotal, AbuseIPDB, URLScan.io, and AlienVault OTX.
 - **Offline Heuristic Fallback**: Evaluates suspicious top-level domains and patterns autonomously without external API keys.
+
+<p align="center">
+  <img src="./docs/screenshots/04_threat_intelligence.png" alt="Live Threat Intelligence" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -155,6 +227,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 - **Searchable Audit Trail**: Filter past scans by subject, sender, or scan ID.
 - **Severity Filter Pills**: Segmented filtering (`ALL`, `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`).
 - **Persistence Controls**: SQLite and PostgreSQL backends with deletion and re-examination controls.
+
+<p align="center">
+  <img src="./docs/screenshots/05_incident_history.png" alt="Scan History & Incident Log" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -163,6 +239,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 
 - **Executive Posture**: Phishing catch rate, safe ratio, and dominant attack vectors.
 - **One-Click Export**: Download formal **JSON** and **CSV** audit summaries for SIEM or compliance archives.
+
+<p align="center">
+  <img src="./docs/screenshots/06_security_reports.png" alt="Reports & Security Analytics" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -171,6 +251,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 
 - **macOS System Settings Aesthetic**: Smooth toggles and numerical threshold adjustments.
 - **Tunable Engine Weights**: Customize ML multiplier (default 25%) vs deterministic heuristic checks.
+
+<p align="center">
+  <img src="./docs/screenshots/07_platform_settings.png" alt="Platform Configuration" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 <details>
@@ -179,6 +263,10 @@ Mail Sentinel incorporates the best elements of Apple's modern Human Interface G
 
 - **Startup Guide**: Pops up on first visit with step-by-step guidance.
 - **Permanent Access**: Re-open anytime via the **"How to Use"** pill in the Navbar or Sidebar.
+
+<p align="center">
+  <img src="./docs/screenshots/08_onboarding_guide.png" alt="Interactive User Guide Modal" width="95%" style="border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 12px;" />
+</p>
 </details>
 
 ---
@@ -288,6 +376,15 @@ Mail Sentinel/
 │   ├── tests/                   # 26 Pytest automated test suites
 │   └── requirements.txt
 ├── docs/
+│   ├── screenshots/             # 8 High-resolution retina UI captures
+│   │   ├── 01_soc_dashboard.png
+│   │   ├── 02_security_scanner.png
+│   │   ├── 03_threat_dossier.png
+│   │   ├── 04_threat_intelligence.png
+│   │   ├── 05_incident_history.png
+│   │   ├── 06_security_reports.png
+│   │   ├── 07_platform_settings.png
+│   │   └── 08_onboarding_guide.png
 │   ├── pipeline_animation.svg   # Live animated detection pipeline
 │   ├── terminal_demo.svg        # Live animated terminal scan execution
 │   └── radar_animation.svg      # Live animated threat radar & Activity Ring

@@ -50,6 +50,13 @@ export const HowToUseModal: React.FC<HowToUseModalProps> = ({
   const [tourStep, setTourStep] = useState<number>(0);
   const [dontShowAgain, setDontShowAgain] = useState<boolean>(false);
 
+  const handleDismiss = React.useCallback(() => {
+    if (dontShowAgain) {
+      localStorage.setItem("mail_sentinel_guide_seen", "true");
+    }
+    onClose();
+  }, [dontShowAgain, onClose]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -58,21 +65,14 @@ export const HowToUseModal: React.FC<HowToUseModalProps> = ({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, dontShowAgain]);
-
-  if (!isOpen) return null;
-
-  const handleDismiss = () => {
-    if (dontShowAgain) {
-      localStorage.setItem("mail_sentinel_guide_seen", "true");
-    }
-    onClose();
-  };
+  }, [isOpen, handleDismiss]);
 
   const handleNavigate = (route: string) => {
     handleDismiss();
     navigate(route);
   };
+
+  if (!isOpen) return null;
 
   const features: FeatureItem[] = [
     {
